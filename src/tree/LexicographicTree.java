@@ -135,70 +135,70 @@ public class LexicographicTree {
 		System.out.println("Number of words : " + dico.size());
 		System.out.println();
 
-		// // Search existing words in dictionary
-		// startTime = System.currentTimeMillis();
-		// System.out.println("Searching existing words in dictionary...");
-		// File file = new File(filename);
-		// for (int i = 0; i < repeatCount; i++) {
-		// Scanner input;
-		// try {
-		// input = new Scanner(file);
-		// while (input.hasNextLine()) {
-		// String word = input.nextLine();
-		// boolean found = dico.containsWord(word);
-		// if (!found) {
-		// System.out.println(word + " / " + word.length() + " -> " + found);
-		// }
-		// }
-		// input.close();
-		// } catch (FileNotFoundException e) {
-		// e.printStackTrace();
-		// }
-		// }
-		// System.out.println("Search time : " + (System.currentTimeMillis() -
-		// startTime) / 1000.0);
-		// System.out.println();
-		//
-		// // Search non-existing words in dictionary
-		// startTime = System.currentTimeMillis();
-		// System.out.println("Searching non-existing words in dictionary...");
-		// for (int i = 0; i < repeatCount; i++) {
-		// Scanner input;
-		// try {
-		// input = new Scanner(file);
-		// while (input.hasNextLine()) {
-		// String word = input.nextLine() + "xx";
-		// boolean found = dico.containsWord(word);
-		// if (found) {
-		// System.out.println(word + " / " + word.length() + " -> " + found);
-		// }
-		// }
-		// input.close();
-		// } catch (FileNotFoundException e) {
-		// e.printStackTrace();
-		// }
-		// }
-		// System.out.println("Search time : " + (System.currentTimeMillis() -
-		// startTime) / 1000.0);
-		// System.out.println();
-		//
-		// // Search words of increasing length in dictionary
-		// startTime = System.currentTimeMillis();
-		// System.out.println("Searching for words of increasing length...");
-		// for (int i = 0; i < 4; i++) {
-		// int total = 0;
-		// for (int n = 0; n <= 28; n++) {
-		// int count = dico.getWordsOfLength(n).size();
-		// total += count;
-		// }
-		// if (dico.size() != total) {
-		// System.out.printf("Total mismatch : dict size = %d / search total = %d\n",
-		// dico.size(), total);
-		// }
-		// }
-		// System.out.println("Search time : " + (System.currentTimeMillis() -
-		// startTime) / 1000.0);
-		// System.out.println();
+		 // Search existing words in dictionary
+		 startTime = System.currentTimeMillis();
+		 System.out.println("Searching existing words in dictionary...");
+		 File file = new File(filename);
+		 for (int i = 0; i < repeatCount; i++) {
+		 Scanner input;
+		 try {
+		 input = new Scanner(file);
+		 while (input.hasNextLine()) {
+		 String word = input.nextLine();
+		 boolean found = dico.containsWord(word);
+		 if (!found) {
+		 System.out.println(word + " / " + word.length() + " -> " + found);
+		 }
+		 }
+		 input.close();
+		 } catch (FileNotFoundException e) {
+		 e.printStackTrace();
+		 }
+		 }
+		 System.out.println("Search time : " + (System.currentTimeMillis() -
+		 startTime) / 1000.0);
+		 System.out.println();
+		
+		 // Search non-existing words in dictionary
+		 startTime = System.currentTimeMillis();
+		 System.out.println("Searching non-existing words in dictionary...");
+		 for (int i = 0; i < repeatCount; i++) {
+		 Scanner input;
+		 try {
+		 input = new Scanner(file);
+		 while (input.hasNextLine()) {
+		 String word = input.nextLine() + "xx";
+		 boolean found = dico.containsWord(word);
+		 if (found) {
+		 System.out.println(word + " / " + word.length() + " -> " + found);
+		 }
+		 }
+		 input.close();
+		 } catch (FileNotFoundException e) {
+		 e.printStackTrace();
+		 }
+		 }
+		 System.out.println("Search time : " + (System.currentTimeMillis() -
+		 startTime) / 1000.0);
+		 System.out.println();
+		
+		 // Search words of increasing length in dictionary
+		 startTime = System.currentTimeMillis();
+		 System.out.println("Searching for words of increasing length...");
+		 for (int i = 0; i < 4; i++) {
+		 int total = 0;
+		 for (int n = 0; n <= 28; n++) {
+		 int count = dico.getWordsOfLength(n).size();
+		 total += count;
+		 }
+		 if (dico.size() != total) {
+		 System.out.printf("Total mismatch : dict size = %d / search total = %d\n",
+		 dico.size(), total);
+		 }
+		 }
+		 System.out.println("Search time : " + (System.currentTimeMillis() -
+		 startTime) / 1000.0);
+		 System.out.println();
 	}
 
 	private static void testDictionarySize() {
@@ -213,6 +213,8 @@ public class LexicographicTree {
 			count++;
 			if (count % MB == 0) {
 				System.out.println(count / MB + "M -> " + Runtime.getRuntime().freeMemory() / MB);
+				System.out.println("num mot : "+ dico.size());
+				
 			}
 		}
 	}
@@ -223,7 +225,7 @@ public class LexicographicTree {
 
 	public static void main(String[] args) {
 		// CTT : test de performance insertion/recherche
-		testDictionaryPerformance("mots/dictionnaire_FR_sans_accents.txt");
+//		testDictionaryPerformance("mots/dictionnaire_FR_sans_accents.txt");
 
 		// CST : test de taille maximale si VM -Xms2048m -Xmx2048m
 		testDictionarySize();

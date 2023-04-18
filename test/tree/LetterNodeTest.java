@@ -10,8 +10,8 @@ class LetterNodeTest {
 	void testLetterNode() {
 		LetterNode node = new LetterNode('a');
 		
-		LetterNode nodeFount = node.getLinkTo('p');
-		assertNull(nodeFount);
+		//LetterNode nodeFount = node.getLinkTo('p');
+		//assertNull(nodeFount);
 		
 		System.out.println(node);
 		

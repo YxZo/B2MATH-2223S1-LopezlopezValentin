@@ -1,14 +1,19 @@
 package tree;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
-public class LetterNode {
+class LetterNode {
+//	private static final String aplhabet = "abcdefghijklmnopqrstuvxyz-'";
     private char letter;
-    private LetterNode[] children;
-    private boolean isFinal = false;
+    private LetterNode[] children;    
+    private boolean isFinal;
+   
 
     public LetterNode(char letter) {
         this.letter = letter;
+        //System.out.println(aplhabet.indexOf(letter));
+        this.isFinal = false;        
     }
 
     /**
@@ -23,13 +28,13 @@ public class LetterNode {
         }
         boolean isAdd = false;
         char letter = str.charAt(0);
-        var founNode = this.getLinkTo(letter);
-        if (founNode != null) {
-            isAdd |= founNode.linkWord(str.substring(1));
+        var node = this.getLinkTo(letter);
+        if (node != null) {
+            isAdd |= node.linkWord(str.substring(1));
         } else {
             var newNode = new LetterNode(letter);
             this.addToTable(newNode);
-            isAdd |= newNode.linkWord(str.substring(1));
+            newNode.linkWord(str.substring(1));
             isAdd = true;
         }
         return isAdd;
@@ -40,9 +45,10 @@ public class LetterNode {
         if (children == null || children.length == 0) {
             return null;
         }
-
+        
         for (LetterNode child : children) {
-            if (child.letter == letter) {
+            if (child.letter == letter && !child.isFinal
+            		) {
                 return child;
             }
         }
@@ -65,27 +71,27 @@ public class LetterNode {
             children = newChildren;
         }
     }
-
+    
     public boolean containt(String word) {
         if (word == null || word.length() == 0) {
             return isFinal;
         }
-        var letter = word.charAt(0);
-        var child = this.getLinkTo(letter);
+        var child = this.getLinkTo(word.charAt(0));
         if (child == null) {
             return false;
         }
         return child.containt(word.substring(1));
     }
 
-    public LetterNode[] getChildren() {
-        return children;
-    }
-
+    /**
+     * for the debug
+     * @return the letter
+     */
     @Override
     public String toString() {
-        return "LetterNode [letter=" + letter + ", children=" + Arrays.toString(children) + ", isFinal=" + isFinal
+        return "LetterNode [letter=" + letter + ", children=" + children + ", isFinal=" + isFinal
                 + "]";
     }
 
 }
+
