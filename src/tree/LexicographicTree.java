@@ -2,6 +2,9 @@ package tree;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -26,20 +29,13 @@ public class LexicographicTree {
 	 * @param filename A text file containing the words to be inserted in the tree
 	 */
 	public LexicographicTree(String filename) {
-		// TODO
-		root = new LetterNode(' ');
-		File file = new File(filename);
-		Scanner input;
+
+		this();
 		try {
-			input = new Scanner(file);
-			while (input.hasNextLine()) {
-				String word = input.nextLine();
-				insertWord(word);
-			}
-			input.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			var list = Files.readAllLines(Paths.get(filename));
+			list.forEach((String str) -> this.insertWord(str));
+		} catch (Exception e) {
+
 		}
 	}
 
@@ -53,7 +49,7 @@ public class LexicographicTree {
 	 * @return The number of words present in the lexicographic tree
 	 */
 	public int size() {
-		return size; // TODO
+		return size;
 	}
 
 	/**
@@ -62,7 +58,7 @@ public class LexicographicTree {
 	 * @param word A word
 	 */
 	public void insertWord(String word) {
-		// TODO
+
 		if (root.linkWord(word))
 			size++;
 	}
@@ -78,20 +74,30 @@ public class LexicographicTree {
 	}
 
 	/**
-	 * Returns an alphabetic list of all words starting with the supplied prefix.
-	 * If 'prefix' is an empty string, all words are returned.
+	 * Returns an alphabetic list of all words starting with the supplied prefix. If
+	 * 'prefix' is an empty string, all words are returned.
 	 * 
 	 * @param prefix Expected prefix
 	 * @return The list of words starting with the supplied prefix
 	 */
 	public List<String> getWords(String prefix) {
 
-		return null; // TODO
+		List<String> foundWord = new ArrayList<>();
+		LetterNode startNode = getNodeOfPrefix(prefix);
+		if (startNode != null) {
+			if (startNode.isFinal()) {
+				foundWord.add(prefix);
+			}
+			// System.out.println(foundWord);
+			getWordform(foundWord, startNode, "");
+		}
+
+		return foundWord; // TODO
 	}
 
 	/**
-	 * Returns an alphabetic list of all words of a given length.
-	 * If 'length' is lower than or equal to zero, an empty list is returned.
+	 * Returns an alphabetic list of all words of a given length. If 'length' is
+	 * lower than or equal to zero, an empty list is returned.
 	 * 
 	 * @param length Expected word length
 	 * @return The list of words with the given length
@@ -103,6 +109,41 @@ public class LexicographicTree {
 	/*
 	 * PRIVATE METHODS
 	 */
+
+	/**
+	 * make recursive call to get the node of prefix to go the deepest node of
+	 * prefix
+	 * 
+	 * @param prefix
+	 * @return
+	 */
+	private LetterNode getNodeOfPrefix(String prefix) {
+
+		LetterNode node = root;
+		for (int i = 0; i < prefix.length(); i++) {
+			node = node.getLinkTo(prefix.charAt(i));
+			if (node == null)
+				return null;
+		}
+		return node;
+	}
+
+	private void getWordform(List<String> allWord, LetterNode node, String prefix) {
+		if (node == null) {
+			return;
+		}
+		if (node.isFinal()) {
+			allWord.add(prefix + node.getLetter());
+		}
+
+		var subedNode = node.getSubNode();
+		if (subedNode == null)
+			return;
+		for (LetterNode subNode : node.getSubNode()) {
+			getWordform(allWord, subNode, prefix + node.getLetter());
+		}
+
+	}
 
 	// TODO
 
@@ -135,70 +176,71 @@ public class LexicographicTree {
 		System.out.println("Number of words : " + dico.size());
 		System.out.println();
 
-		 // Search existing words in dictionary
-		 startTime = System.currentTimeMillis();
-		 System.out.println("Searching existing words in dictionary...");
-		 File file = new File(filename);
-		 for (int i = 0; i < repeatCount; i++) {
-		 Scanner input;
-		 try {
-		 input = new Scanner(file);
-		 while (input.hasNextLine()) {
-		 String word = input.nextLine();
-		 boolean found = dico.containsWord(word);
-		 if (!found) {
-		 System.out.println(word + " / " + word.length() + " -> " + found);
-		 }
-		 }
-		 input.close();
-		 } catch (FileNotFoundException e) {
-		 e.printStackTrace();
-		 }
-		 }
-		 System.out.println("Search time : " + (System.currentTimeMillis() -
-		 startTime) / 1000.0);
-		 System.out.println();
-		
-		 // Search non-existing words in dictionary
-		 startTime = System.currentTimeMillis();
-		 System.out.println("Searching non-existing words in dictionary...");
-		 for (int i = 0; i < repeatCount; i++) {
-		 Scanner input;
-		 try {
-		 input = new Scanner(file);
-		 while (input.hasNextLine()) {
-		 String word = input.nextLine() + "xx";
-		 boolean found = dico.containsWord(word);
-		 if (found) {
-		 System.out.println(word + " / " + word.length() + " -> " + found);
-		 }
-		 }
-		 input.close();
-		 } catch (FileNotFoundException e) {
-		 e.printStackTrace();
-		 }
-		 }
-		 System.out.println("Search time : " + (System.currentTimeMillis() -
-		 startTime) / 1000.0);
-		 System.out.println();
-		
-		 // Search words of increasing length in dictionary
-		 startTime = System.currentTimeMillis();
-		 System.out.println("Searching for words of increasing length...");
-		 for (int i = 0; i < 4; i++) {
-		 int total = 0;
-		 for (int n = 0; n <= 28; n++) {
-		 int count = dico.getWordsOfLength(n).size();
-		 total += count;
-		 }
-		 if (dico.size() != total) {
-		 System.out.printf("Total mismatch : dict size = %d / search total = %d\n",
-		 dico.size(), total);
-		 }
-		 }
-		 System.out.println("Search time : " + (System.currentTimeMillis() -
-		 startTime) / 1000.0);
-		 System.out.println();
+		//dico.getWords("zo").forEach(System.out::println);
+		//System.out.println(dico.containsWord("zythums"));
+
+		// Search existing words in dictionary
+		startTime = System.currentTimeMillis();
+		System.out.println("Searching existing words in dictionary...");
+		File file = new File(filename);
+		for (int i = 0; i < repeatCount; i++) {
+			Scanner input;
+			try {
+				input = new Scanner(file);
+				while (input.hasNextLine()) {
+					String word = input.nextLine();
+					boolean found = dico.containsWord(word);
+					if (!found) {
+						 System.out.println(word + " / " + word.length() + " -> " + found);
+					}
+				}
+				input.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Search time : " + (System.currentTimeMillis() - startTime) / 1000.0);
+		System.out.println();
+
+		// Search non-existing words in dictionary
+		startTime = System.currentTimeMillis();
+		System.out.println("Searching non-existing words in dictionary...");
+		for (int i = 0; i < repeatCount; i++) {
+			Scanner input;
+			try {
+				input = new Scanner(file);
+				while (input.hasNextLine()) {
+					String word = input.nextLine() + "xx";
+					boolean found = dico.containsWord(word);
+					if (found) {
+						System.out.println(word + " / " + word.length() + " -> " + found);
+					}
+				}
+				input.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Search time : " + (System.currentTimeMillis() - startTime) / 1000.0);
+		System.out.println();
+
+		// // Search words of increasing length in dictionary
+		// startTime = System.currentTimeMillis();
+		// System.out.println("Searching for words of increasing length...");
+		// for (int i = 0; i < 4; i++) {
+		// int total = 0;
+		// for (int n = 0; n <= 28; n++) {
+		// int count = dico.getWordsOfLength(n).size();
+		// total += count;
+		// }
+		// if (dico.size() != total) {
+		// System.out.printf("Total mismatch : dict size = %d / search total = %d\n",
+		// dico.size(), total);
+		// }
+		// }
+		// System.out.println("Search time : " + (System.currentTimeMillis() -
+		// startTime) / 1000.0);
+		// System.out.println();
 	}
 
 	private static void testDictionarySize() {
@@ -213,8 +255,8 @@ public class LexicographicTree {
 			count++;
 			if (count % MB == 0) {
 				System.out.println(count / MB + "M -> " + Runtime.getRuntime().freeMemory() / MB);
-				System.out.println("num mot : "+ dico.size());
-				
+				//System.out.println("num mot : " + dico.size());
+
 			}
 		}
 	}
@@ -225,7 +267,7 @@ public class LexicographicTree {
 
 	public static void main(String[] args) {
 		// CTT : test de performance insertion/recherche
-//		testDictionaryPerformance("mots/dictionnaire_FR_sans_accents.txt");
+		testDictionaryPerformance("mots/dictionnaire_FR_sans_accents.txt");
 
 		// CST : test de taille maximale si VM -Xms2048m -Xmx2048m
 		testDictionarySize();

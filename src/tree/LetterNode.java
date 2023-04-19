@@ -2,9 +2,9 @@ package tree;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 class LetterNode {
-//	private static final String aplhabet = "abcdefghijklmnopqrstuvxyz-'";
     private char letter;
     private LetterNode[] children;    
     private boolean isFinal;
@@ -12,7 +12,6 @@ class LetterNode {
 
     public LetterNode(char letter) {
         this.letter = letter;
-        //System.out.println(aplhabet.indexOf(letter));
         this.isFinal = false;        
     }
 
@@ -47,8 +46,7 @@ class LetterNode {
         }
         
         for (LetterNode child : children) {
-            if (child.letter == letter && !child.isFinal
-            		) {
+            if (child.letter == letter) {
                 return child;
             }
         }
@@ -58,6 +56,9 @@ class LetterNode {
 
     public boolean isFinal() {
         return isFinal;
+    }
+    public char getLetter() {
+    	return letter;
     }
 
     // ajoute un noeud à la table des enfants
@@ -71,6 +72,7 @@ class LetterNode {
             children = newChildren;
         }
     }
+    
     
     public boolean containt(String word) {
         if (word == null || word.length() == 0) {
@@ -92,6 +94,11 @@ class LetterNode {
         return "LetterNode [letter=" + letter + ", children=" + children + ", isFinal=" + isFinal
                 + "]";
     }
+
+	public LetterNode[] getSubNode() {
+		
+		return children;
+	}
 
 }
 
