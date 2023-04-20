@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 public class LexicographicTree {
 	public LetterNode root;
+	public LetterNode[] roots;
 	private int size;
 	/*
 	 * CONSTRUCTORS
@@ -61,6 +62,7 @@ public class LexicographicTree {
 
 		if (root.linkWord(word))
 			size++;
+
 	}
 
 	/**
@@ -85,10 +87,10 @@ public class LexicographicTree {
 		List<String> foundWord = new ArrayList<>();
 		LetterNode startNode = getNodeOfPrefix(prefix);
 		if (startNode != null) {
-			if (startNode.isFinal()) {
-				foundWord.add(prefix);
-			}
-			getWordform(foundWord, startNode, "");
+//			if (startNode.isFinal()) {
+//				foundWord.add(prefix);
+//			}
+			getWordform(foundWord, startNode, prefix);
 		}
 
 		return foundWord;
@@ -122,7 +124,6 @@ public class LexicographicTree {
 	 * @return
 	 */
 	private LetterNode getNodeOfPrefix(String prefix) {
-
 		LetterNode node = root;
 		for (int i = 0; i < prefix.length(); i++) {
 			node = node.getLinkTo(prefix.charAt(i));
@@ -133,27 +134,27 @@ public class LexicographicTree {
 	}
 
 	private void getWordform(List<String> allWord, LetterNode node, String prefix) {
+
 		if (node == null) {
 			return;
 		}
-		if (node.isFinal()) {
-			allWord.add(prefix + (node.getLetter() == ' ' ?"" :node.getLetter()));
-		}
-
 		var subedNode = node.getSubNode();
+		if (node.isFinal() || subedNode == null) {
+			allWord.add(prefix);
+		}
 		if (subedNode == null)
 			return;
 		for (LetterNode subNode : node.getSubNode()) {
-			getWordform(allWord, subNode, prefix + node.getLetter());
+			getWordform(allWord, subNode, prefix + subNode.getLetter());
 		}
 
 	}
 
 	private List<String> getSubWord(int n, LetterNode parent, String prefix) {
 		if (n <= 0) {
-			if(parent.isFinal())
+			if (parent.isFinal())
 				return List.of(prefix);
-			else 
+			else
 				return List.of();
 		}
 		if (parent.getSubNode() == null) {

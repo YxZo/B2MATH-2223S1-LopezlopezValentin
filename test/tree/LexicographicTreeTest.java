@@ -52,7 +52,7 @@ public class LexicographicTreeTest {
 	}
 	@Test
 	void getWords_General() {
-		System.out.println(DICT.getWords(""));
+		
 		assertEquals(WORDS.length, DICT.getWords("").size());
 		assertArrayEquals(WORDS, DICT.getWords("").toArray());
 		
@@ -67,6 +67,7 @@ public class LexicographicTreeTest {
 		assertEquals(4, DICT.getWordsOfLength(3).size());
 		assertArrayEquals(new String[] {"aux", "bus", "but", "ete"}, DICT.getWordsOfLength(3).toArray());
 	}
+	
 	
 
 	
