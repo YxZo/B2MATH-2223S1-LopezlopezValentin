@@ -3,10 +3,10 @@ package tree;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -29,15 +29,16 @@ public class LexicographicTree {
 	 * Constructor : creates a lexicographic tree populated with words
 	 * 
 	 * @param filename A text file containing the words to be inserted in the tree
+	 * @throws NoSuchFileException 
 	 */
-	public LexicographicTree(String filename) {
+	public LexicographicTree(String filename) throws NoSuchFileException {
 
 		this();
 		try {
 			var list = Files.readAllLines(Paths.get(filename));
 			list.forEach((String str) -> this.insertWord(str));
 		} catch (Exception e) {
-
+			throw new NoSuchFileException(filename);
 		}
 	}
 
@@ -88,11 +89,9 @@ public class LexicographicTree {
 		List<String> foundWord = new ArrayList<>();
 		LetterNode startNode = getNodeOfPrefix(prefix);
 		if (startNode != null) {
-//			if (startNode.isFinal()) {
-//				foundWord.add(prefix);
-//			}
 			getWordform(foundWord, startNode, prefix);
 		}
+		Collections.sort(foundWord);
 
 		return foundWord;
 	}
@@ -109,7 +108,7 @@ public class LexicographicTree {
 			return List.of();
 
 		List<String> foundWord = getSubWord(length, root, "");
-
+		Collections.sort(foundWord);
 		return foundWord;
 	}
 
@@ -165,12 +164,10 @@ public class LexicographicTree {
 
 		for (LetterNode node : parent.getSubNode()) {
 			foundWord.addAll(getSubWord(n - 1, node, prefix + node.getLetter()));
-		}
-//		Collections.sort(foundWord);
+		}		
 		return foundWord;
 	}
 
-	// TODO
 
 	/*
 	 * TEST FUNCTIONS
@@ -186,7 +183,7 @@ public class LexicographicTree {
 		return word;
 	}
 
-	private static void testDictionaryPerformance(String filename) {
+	private static void testDictionaryPerformance(String filename) throws NoSuchFileException  {
 		long startTime;
 		int repeatCount = 20;
 
@@ -284,7 +281,7 @@ public class LexicographicTree {
 	 * MAIN PROGRAM
 	 */
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws NoSuchFileException {
 		// CTT : test de performance insertion/recherche
 		testDictionaryPerformance("mots/dictionnaire_FR_sans_accents.txt");
 

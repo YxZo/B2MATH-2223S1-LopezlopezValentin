@@ -1,5 +1,6 @@
 package boggle;
 
+import java.nio.file.NoSuchFileException;
 import java.util.Set;
 import java.util.TreeSet;
 import tree.LexicographicTree;
@@ -75,7 +76,7 @@ public class Boggle {
 	 * MAIN PROGRAM
 	 */
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws NoSuchFileException {
 		long startTime = System.currentTimeMillis();
 		System.out.println("Loading dictionary...");
 		LexicographicTree dictionary = new LexicographicTree("mots/dictionnaire_FR_sans_accents.txt");

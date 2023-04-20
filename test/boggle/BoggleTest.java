@@ -7,6 +7,7 @@ import tree.LexicographicTree;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.nio.file.NoSuchFileException;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
@@ -20,7 +21,7 @@ public class BoggleTest {
 	private static LexicographicTree dictionary = null;
 
 	@BeforeAll
-	private static void initTestDictionary() {
+	private static void initTestDictionary() throws NoSuchFileException {
 		System.out.print("Loading dictionary...");
 		dictionary = new LexicographicTree("mots/dictionnaire_FR_sans_accents.txt");
 		System.out.println(" done.");

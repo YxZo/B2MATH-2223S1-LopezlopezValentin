@@ -3,7 +3,7 @@ package tree;
 import java.util.Arrays;
 import java.util.HashMap;
 
-class LetterNode {
+class LetterNode implements Comparable<LetterNode> {
 	private char letter;
 	private LetterNode[] children;
 //	private HashMap<Character, LetterNode> childrens;
@@ -12,7 +12,7 @@ class LetterNode {
 	public LetterNode(char letter) {
 		this.letter = letter;
 		this.isFinal = false;
-		new HashMap().get(children);
+
 	}
 
 	/**
@@ -44,8 +44,9 @@ class LetterNode {
 		if (children == null || children.length == 0) {
 			return null;
 		}
-		if(children[children.length-1].letter < letter || children[0].letter > letter )
-			return null;
+//		if (children[children.length - 1].letter < letter || children[0].letter > letter)
+//			return null;
+		
 		for (LetterNode child : children) {
 			if (child.letter == letter) {
 				return child;
@@ -76,7 +77,7 @@ class LetterNode {
 			LetterNode[] newChildren = Arrays.copyOf(children, children.length + 1);
 			newChildren[children.length] = node;
 			children = newChildren;
-
+//			sort();
 		}
 //		if( childrens == null)
 //			childrens = new HashMap<>();
@@ -112,10 +113,13 @@ class LetterNode {
 	}
 
 	public void sort() {
-
-		Arrays.sort(children);
+		Arrays.sort(this.children);
 	}
 
-	
+	@Override
+	public int compareTo(LetterNode o) {
+		// TODO Auto-generated method stub
+		return Character.compare(letter, o.letter);
+	}
 
 }
