@@ -2,9 +2,8 @@ package tree;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
-class LetterNode implements Comparable<LetterNode>{
+class LetterNode {
 	private char letter;
 	private LetterNode[] children;
 //	private HashMap<Character, LetterNode> childrens;
@@ -13,7 +12,7 @@ class LetterNode implements Comparable<LetterNode>{
 	public LetterNode(char letter) {
 		this.letter = letter;
 		this.isFinal = false;
-		
+		new HashMap().get(children);
 	}
 
 	/**
@@ -53,6 +52,11 @@ class LetterNode implements Comparable<LetterNode>{
 			}
 		}
 		return null;
+//		if (childrens == null) {
+//			return null;
+//		}
+//		return childrens.get(letter);
+
 	}
 
 	public boolean isFinal() {
@@ -74,6 +78,10 @@ class LetterNode implements Comparable<LetterNode>{
 			children = newChildren;
 
 		}
+//		if( childrens == null)
+//			childrens = new HashMap<>();
+//		childrens.put(node.getLetter(), node);
+
 	}
 
 	public boolean containt(String word) {
@@ -97,26 +105,17 @@ class LetterNode implements Comparable<LetterNode>{
 		return "LetterNode [letter=" + letter + ", children=" + children + ", isFinal=" + isFinal + "]";
 	}
 
+//	public Collection<LetterNode> getSubNode() {
 	public LetterNode[] getSubNode() {
 		return children;
+//		return childrens== null ? null : childrens.values();
 	}
-	
+
 	public void sort() {
-		
+
 		Arrays.sort(children);
 	}
 
-	@Override
-	public int compareTo(LetterNode o) {
-		// TODO Auto-generated method stub
-		return Character.compare(this.letter, o.letter);
-	}
-	
-	
-	
-
-	
-	
 	
 
 }

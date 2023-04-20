@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -20,7 +22,6 @@ public class LexicographicTree {
 	 * Constructor : creates an empty lexicographic tree.
 	 */
 	public LexicographicTree() {
-		// TODO
 		root = new LetterNode(' ');
 	}
 
@@ -165,6 +166,7 @@ public class LexicographicTree {
 		for (LetterNode node : parent.getSubNode()) {
 			foundWord.addAll(getSubWord(n - 1, node, prefix + node.getLetter()));
 		}
+//		Collections.sort(foundWord);
 		return foundWord;
 	}
 
