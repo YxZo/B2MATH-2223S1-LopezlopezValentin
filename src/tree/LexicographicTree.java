@@ -199,9 +199,6 @@ public class LexicographicTree {
 		System.out.println("Number of words : " + dico.size());
 		System.out.println();
 
-		// dico.getWords("zo").forEach(System.out::println);
-		// System.out.println(dico.containsWord("zythums"));
-
 		// Search existing words in dictionary
 		startTime = System.currentTimeMillis();
 		System.out.println("Searching existing words in dictionary...");
@@ -290,6 +287,6 @@ public class LexicographicTree {
 		testDictionaryPerformance("mots/dictionnaire_FR_sans_accents.txt");
 
 		// CST : test de taille maximale si VM -Xms2048m -Xmx2048m
-//		 testDictionarySize();
+		 testDictionarySize();
 	}
 }

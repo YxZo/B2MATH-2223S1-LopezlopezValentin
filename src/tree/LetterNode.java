@@ -4,14 +4,16 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-class LetterNode {
+class LetterNode implements Comparable<LetterNode>{
 	private char letter;
 	private LetterNode[] children;
+//	private HashMap<Character, LetterNode> childrens;
 	private boolean isFinal;
 
 	public LetterNode(char letter) {
 		this.letter = letter;
 		this.isFinal = false;
+		
 	}
 
 	/**
@@ -43,13 +45,13 @@ class LetterNode {
 		if (children == null || children.length == 0) {
 			return null;
 		}
-
+		if(children[children.length-1].letter < letter || children[0].letter > letter )
+			return null;
 		for (LetterNode child : children) {
 			if (child.letter == letter) {
 				return child;
 			}
 		}
-
 		return null;
 	}
 
@@ -70,6 +72,7 @@ class LetterNode {
 			LetterNode[] newChildren = Arrays.copyOf(children, children.length + 1);
 			newChildren[children.length] = node;
 			children = newChildren;
+
 		}
 	}
 
@@ -95,8 +98,25 @@ class LetterNode {
 	}
 
 	public LetterNode[] getSubNode() {
-
 		return children;
 	}
+	
+	public void sort() {
+		
+		Arrays.sort(children);
+	}
+
+	@Override
+	public int compareTo(LetterNode o) {
+		// TODO Auto-generated method stub
+		return Character.compare(this.letter, o.letter);
+	}
+	
+	
+	
+
+	
+	
+	
 
 }
