@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class LexicographicTree {
-	private LetterNode root;
+	public LetterNode root;
 	private int size;
 	/*
 	 * CONSTRUCTORS
@@ -88,11 +88,10 @@ public class LexicographicTree {
 			if (startNode.isFinal()) {
 				foundWord.add(prefix);
 			}
-			// System.out.println(foundWord);
 			getWordform(foundWord, startNode, "");
 		}
 
-		return foundWord; // TODO
+		return foundWord;
 	}
 
 	/**
@@ -103,7 +102,12 @@ public class LexicographicTree {
 	 * @return The list of words with the given length
 	 */
 	public List<String> getWordsOfLength(int length) {
-		return null; // TODO
+		if (length <= 0)
+			return List.of();
+
+		List<String> foundWord = getSubWord(length, root, "");
+
+		return foundWord;
 	}
 
 	/*
@@ -133,7 +137,7 @@ public class LexicographicTree {
 			return;
 		}
 		if (node.isFinal()) {
-			allWord.add(prefix + node.getLetter());
+			allWord.add(prefix + (node.getLetter() == ' ' ?"" :node.getLetter()));
 		}
 
 		var subedNode = node.getSubNode();
@@ -143,6 +147,24 @@ public class LexicographicTree {
 			getWordform(allWord, subNode, prefix + node.getLetter());
 		}
 
+	}
+
+	private List<String> getSubWord(int n, LetterNode parent, String prefix) {
+		if (n <= 0) {
+			if(parent.isFinal())
+				return List.of(prefix);
+			else 
+				return List.of();
+		}
+		if (parent.getSubNode() == null) {
+			return List.of();
+		}
+		List<String> foundWord = new ArrayList<>();
+
+		for (LetterNode node : parent.getSubNode()) {
+			foundWord.addAll(getSubWord(n - 1, node, prefix + node.getLetter()));
+		}
+		return foundWord;
 	}
 
 	// TODO
@@ -176,8 +198,8 @@ public class LexicographicTree {
 		System.out.println("Number of words : " + dico.size());
 		System.out.println();
 
-		//dico.getWords("zo").forEach(System.out::println);
-		//System.out.println(dico.containsWord("zythums"));
+		// dico.getWords("zo").forEach(System.out::println);
+		// System.out.println(dico.containsWord("zythums"));
 
 		// Search existing words in dictionary
 		startTime = System.currentTimeMillis();
@@ -191,7 +213,7 @@ public class LexicographicTree {
 					String word = input.nextLine();
 					boolean found = dico.containsWord(word);
 					if (!found) {
-						 System.out.println(word + " / " + word.length() + " -> " + found);
+						System.out.println(word + " / " + word.length() + " -> " + found);
 					}
 				}
 				input.close();
@@ -224,23 +246,21 @@ public class LexicographicTree {
 		System.out.println("Search time : " + (System.currentTimeMillis() - startTime) / 1000.0);
 		System.out.println();
 
-		// // Search words of increasing length in dictionary
-		// startTime = System.currentTimeMillis();
-		// System.out.println("Searching for words of increasing length...");
-		// for (int i = 0; i < 4; i++) {
-		// int total = 0;
-		// for (int n = 0; n <= 28; n++) {
-		// int count = dico.getWordsOfLength(n).size();
-		// total += count;
-		// }
-		// if (dico.size() != total) {
-		// System.out.printf("Total mismatch : dict size = %d / search total = %d\n",
-		// dico.size(), total);
-		// }
-		// }
-		// System.out.println("Search time : " + (System.currentTimeMillis() -
-		// startTime) / 1000.0);
-		// System.out.println();
+		// Search words of increasing length in dictionary
+		startTime = System.currentTimeMillis();
+		System.out.println("Searching for words of increasing length...");
+		for (int i = 0; i < 4; i++) {
+			int total = 0;
+			for (int n = 0; n <= 28; n++) {
+				int count = dico.getWordsOfLength(n).size();
+				total += count;
+			}
+			if (dico.size() != total) {
+				System.out.printf("Total mismatch : dict size = %d / search total = %d\n", dico.size(), total);
+			}
+		}
+		System.out.println("Search time : " + (System.currentTimeMillis() - startTime) / 1000.0);
+		System.out.println();
 	}
 
 	private static void testDictionarySize() {
@@ -255,7 +275,6 @@ public class LexicographicTree {
 			count++;
 			if (count % MB == 0) {
 				System.out.println(count / MB + "M -> " + Runtime.getRuntime().freeMemory() / MB);
-				//System.out.println("num mot : " + dico.size());
 
 			}
 		}
@@ -270,6 +289,6 @@ public class LexicographicTree {
 		testDictionaryPerformance("mots/dictionnaire_FR_sans_accents.txt");
 
 		// CST : test de taille maximale si VM -Xms2048m -Xmx2048m
-		testDictionarySize();
+//		 testDictionarySize();
 	}
 }
