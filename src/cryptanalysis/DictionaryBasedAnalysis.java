@@ -6,6 +6,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
 import tree.LexicographicTree;
 
 public class DictionaryBasedAnalysis {
@@ -15,12 +18,23 @@ public class DictionaryBasedAnalysis {
 	
 	private static final String CRYPTOGRAM_FILE = "txt/Plus fort que Sherlock Holmes (cryptogram).txt";
 	private static final String DECODING_ALPHABET = "VNSTBIQLWOZUEJMRYGCPDKHXAF"; // Sherlock
+	
+	
+	private LexicographicTree dict;
+	private List<String> cryptogramWord;
 
 	/*
 	 * CONSTRUCTOR
 	 */
 	public DictionaryBasedAnalysis(String cryptogram, LexicographicTree dict) {
-		// TODO
+		this.dict = dict;
+		this.cryptogramWord = new ArrayList<>();
+		for (String word : cryptogram.replace("\n"," ").split(" ")) {
+			if(word.length() > 0) {
+				cryptogramWord.add(word);
+			}
+		}
+		
 	}
 	
 	/*
@@ -33,6 +47,10 @@ public class DictionaryBasedAnalysis {
 	 * @return The decoding alphabet at the end of the analysis process
 	 */
 	public String guessApproximatedAlphabet(String alphabet) {
+		
+		
+		
+		
 		return ""; // TODO
 	}
 
@@ -104,19 +122,19 @@ public class DictionaryBasedAnalysis {
 		 *  Decode cryptogram
 		 */
 		DictionaryBasedAnalysis dba = new DictionaryBasedAnalysis(cryptogram, dict);
-		String startAlphabet = LETTERS;
-//		String startAlphabet = "ZISHNFOBMAVQLPEUGWXTDYRJKC"; // Random alphabet
-		String finalAlphabet = dba.guessApproximatedAlphabet(startAlphabet);
-		
-		// Display final results
-		System.out.println();
-		System.out.println("Decoding     alphabet : " + DECODING_ALPHABET);
-		System.out.println("Approximated alphabet : " + finalAlphabet);
-		System.out.println("Remaining differences : " + compareAlphabets(DECODING_ALPHABET, finalAlphabet));
-		System.out.println();
-		
-		// Display decoded text
-		System.out.println("*** DECODED TEXT ***\n" + applySubstitution(cryptogram, finalAlphabet).substring(0, 200));
-		System.out.println();
+//		String startAlphabet = LETTERS;
+////		String startAlphabet = "ZISHNFOBMAVQLPEUGWXTDYRJKC"; // Random alphabet
+//		String finalAlphabet = dba.guessApproximatedAlphabet(startAlphabet);
+//		
+//		// Display final results
+//		System.out.println();
+//		System.out.println("Decoding     alphabet : " + DECODING_ALPHABET);
+//		System.out.println("Approximated alphabet : " + finalAlphabet);
+//		System.out.println("Remaining differences : " + compareAlphabets(DECODING_ALPHABET, finalAlphabet));
+//		System.out.println();
+//		
+//		// Display decoded text
+//		System.out.println("*** DECODED TEXT ***\n" + applySubstitution(cryptogram, finalAlphabet).substring(0, 200));
+//		System.out.println();
 	}
 }
