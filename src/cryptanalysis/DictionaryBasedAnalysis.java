@@ -7,19 +7,20 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import tree.LexicographicTree;
 
 public class DictionaryBasedAnalysis {
-	
+
 	private static final String LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	private static final String DICTIONARY = "mots/dictionnaire_FR_sans_accents.txt";
-	
+
 	private static final String CRYPTOGRAM_FILE = "txt/Plus fort que Sherlock Holmes (cryptogram).txt";
 	private static final String DECODING_ALPHABET = "VNSTBIQLWOZUEJMRYGCPDKHXAF"; // Sherlock
-	
-	
+
 	private LexicographicTree dict;
 	private List<String> cryptogramWord;
 
@@ -29,46 +30,52 @@ public class DictionaryBasedAnalysis {
 	public DictionaryBasedAnalysis(String cryptogram, LexicographicTree dict) {
 		this.dict = dict;
 		this.cryptogramWord = new ArrayList<>();
-		for (String word : cryptogram.replace("\n"," ").split(" ")) {
-			if(word.length() > 0) {
-				cryptogramWord.add(word);
-			}
+		for (String word : cryptogram.split("\\s+")) {
+			cryptogramWord.add(word);
 		}
-		
+		Collections.sort(cryptogramWord, new Comparator<String>() {
+            @Override
+            public int compare(String s1, String s2) {
+                return Integer.compare(s2.length(), s1.length());
+            }
+        });
+		System.out.println(cryptogramWord);
+
 	}
-	
+
 	/*
 	 * PUBLIC METHODS
 	 */
 
 	/**
-	 * Performs a dictionary-based analysis of the cryptogram and returns an approximated decoding alphabet.
+	 * Performs a dictionary-based analysis of the cryptogram and returns an
+	 * approximated decoding alphabet.
+	 * 
 	 * @param alphabet The decoding alphabet from which the analysis starts
 	 * @return The decoding alphabet at the end of the analysis process
 	 */
 	public String guessApproximatedAlphabet(String alphabet) {
-		
-		
-		
-		
+
 		return ""; // TODO
 	}
 
 	/**
 	 * Applies an alphabet-specified substitution to a text.
-	 * @param text A text
+	 * 
+	 * @param text     A text
 	 * @param alphabet A substitution alphabet
 	 * @return The substituted text
 	 */
 	public static String applySubstitution(String text, String alphabet) {
 		return ""; // TODO
 	}
-	
+
 	/*
 	 * PRIVATE METHODS
 	 */
 	/**
 	 * Compares two substitution alphabets.
+	 * 
 	 * @param a First substitution alphabet
 	 * @param b Second substitution alphabet
 	 * @return A string where differing positions are indicated with an 'x'
@@ -80,9 +87,10 @@ public class DictionaryBasedAnalysis {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Load the text file pointed to by pathname into a String.
+	 * 
 	 * @param pathname A path to text file.
 	 * @param encoding Character set used by the text file.
 	 * @return A String containing the text in the file.
@@ -97,11 +105,11 @@ public class DictionaryBasedAnalysis {
 		}
 		return data;
 	}
-	
-    /*
+
+	/*
 	 * MAIN PROGRAM
 	 */
-	
+
 	public static void main(String[] args) throws NoSuchFileException {
 		/*
 		 * Load dictionary
@@ -110,7 +118,7 @@ public class DictionaryBasedAnalysis {
 		LexicographicTree dict = new LexicographicTree(DICTIONARY);
 		System.out.println("done.");
 		System.out.println();
-		
+
 		/*
 		 * Load cryptogram
 		 */
@@ -119,7 +127,7 @@ public class DictionaryBasedAnalysis {
 //		System.out.println();
 
 		/*
-		 *  Decode cryptogram
+		 * Decode cryptogram
 		 */
 		DictionaryBasedAnalysis dba = new DictionaryBasedAnalysis(cryptogram, dict);
 //		String startAlphabet = LETTERS;
