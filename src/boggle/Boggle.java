@@ -60,7 +60,13 @@ public class Boggle {
 	 * @return a string of letters
 	 */
 	public String letters() {
-		return "";
+		String letter = "";
+		for (char[] ch : board) {
+			for (char c : ch) {
+				letter += c;
+			}
+		}
+		return letter;
 	}
 
 	/**
@@ -70,7 +76,18 @@ public class Boggle {
 	 * @return true if the word is present, false otherwise
 	 */
 	public boolean contains(String word) {
-		return true;
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[i].length; j++) {
+				if(board[i][j] == word.charAt(0)) {
+					boolean[][] visited = new boolean[size][size];
+					if(searchForStr(i, j, "", visited, word))
+							return true;
+				}				
+			}
+		}
+		
+		
+		return false;
 	}
 
 	/**
@@ -84,10 +101,7 @@ public class Boggle {
 			for (int j = 0; j < board[i].length; j++) {
 				boolean[][] visited = new boolean[size][size];
 				searchForOneLetter(i, j, "", allWord, visited);
-
-				// System.out.println("\nother letter\n");
 			}
-
 		}
 		return allWord;
 	}
@@ -121,19 +135,46 @@ public class Boggle {
 		currentWord += board[col][row];
 
 		int num = dictionary.hasPrefixOrWord(currentWord);
-		if (num >= 0) {
-			if (num == 1 && currentWord.length() >= 3) {
-				allWord.add(currentWord);
-			}
-			visited[row][col] = true;
-		} else {
-			return;
+
+		if (num == 1 && currentWord.length() >= 3) {
+			allWord.add(currentWord);
 		}
+
+		if (num == -1)
+			return;
+
+		visited[row][col] = true;
 
 		for (int i = 0; i < ROWS.length; i++) {
 			searchForOneLetter(col + COLS[i], row + ROWS[i], currentWord, allWord, visited);
 		}
 		visited[row][col] = false;
+	}
+	
+	
+	private boolean searchForStr(int col, int row, String currentWord, boolean[][] visited, String str) {
+		if (row < 0 || row >= size || col < 0 || col >= size || visited[row][col]) {
+			return false;
+		}
+		
+		currentWord += board[col][row];
+		
+		if(str.equals(currentWord))
+			return true;
+		
+		if(!str.startsWith(currentWord))
+			return false;
+		
+		boolean isIn = false;	
+		visited[row][col] = true;
+		
+		for (int i = 0; i < ROWS.length; i++) {
+			isIn |= searchForStr(col + COLS[i], row + ROWS[i], currentWord, visited, str);
+			if(isIn)
+				break;
+		}
+		visited[row][col] = false;
+		return isIn;
 	}
 
 	/*
@@ -192,6 +233,15 @@ public class Boggle {
 
 	}
 
+	/**
+	 * methode for simplify test in console
+	 * 
+	 * @param grid
+	 * @param size
+	 * @param dictionary
+	 * @param printWord
+	 * @param printgrid
+	 */
 	private static void test(String grid, int size, LexicographicTree dictionary, boolean printWord,
 			boolean printgrid) {
 		long startTime = System.currentTimeMillis();

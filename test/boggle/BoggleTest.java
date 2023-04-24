@@ -31,10 +31,12 @@ public class BoggleTest {
 	void wikipediaExample() {
 		Boggle b = new Boggle(4, GRID_LETTERS, dictionary);
 		assertNotNull(b);
-//		assertEquals(GRID_LETTERS, b.letters());
-//		assertTrue(b.contains("songent"));
-//		assertFalse(b.contains("sono"));
+		assertEquals(GRID_LETTERS, b.letters());
+		assertTrue(b.contains("songent"));
+		assertFalse(b.contains("sono"));
 		assertEquals(EXPECTED_WORDS, b.solve());
 	}
 
+	
+	
 }
