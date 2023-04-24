@@ -1,23 +1,29 @@
 package tree;
 
 import java.util.Arrays;
-import java.util.HashMap;
 
-class LetterNode implements Comparable<LetterNode> {
+class LetterNode {
 	private char letter;
 	private LetterNode[] children;
-//	private HashMap<Character, LetterNode> childrens;
 	private boolean isFinal;
 
+	/*****************/
+	/*  CONSTRUCTOR  */
+	/*****************/
 	public LetterNode(char letter) {
 		this.letter = letter;
 		this.isFinal = false;
 
 	}
+	
+	/************/
+	/*  PUBLIC  */
+	/************/
 
 	/**
+	 * add a word to the tree
 	 * 
-	 * @param str
+	 * @param str the word to add
 	 * @return if the word is add
 	 */
 	public boolean linkWord(String str) {
@@ -40,51 +46,31 @@ class LetterNode implements Comparable<LetterNode> {
 
 	}
 
+	/**
+	 * get the link to the node with the letter
+	 * 
+	 * @param letter the letter to find
+	 * @return the node with the letter or null if not found
+	 */
 	public LetterNode getLinkTo(char letter) {
 		if (children == null || children.length == 0) {
 			return null;
 		}
-//		if (children[children.length - 1].letter < letter || children[0].letter > letter)
-//			return null;
-		
 		for (LetterNode child : children) {
 			if (child.letter == letter) {
 				return child;
 			}
 		}
 		return null;
-//		if (childrens == null) {
-//			return null;
-//		}
-//		return childrens.get(letter);
-
 	}
 
-	public boolean isFinal() {
-		return isFinal;
-	}
-
-	public char getLetter() {
-		return letter;
-	}
-
-	// ajoute un noeud à la table des enfants
-	private void addToTable(LetterNode node) {
-		if (children == null) {
-			children = new LetterNode[1];
-			children[0] = node;
-		} else {
-			LetterNode[] newChildren = Arrays.copyOf(children, children.length + 1);
-			newChildren[children.length] = node;
-			children = newChildren;
-//			sort();
-		}
-//		if( childrens == null)
-//			childrens = new HashMap<>();
-//		childrens.put(node.getLetter(), node);
-
-	}
-
+	/**
+	 * check if the tree contain the word
+	 * that launch the recursive function on the children
+	 * 
+	 * @param word the word to find
+	 * @return if the word is contain
+	 */
 	public boolean containt(String word) {
 		if (word == null || word.length() == 0) {
 			return isFinal;
@@ -95,7 +81,60 @@ class LetterNode implements Comparable<LetterNode> {
 		}
 		return child.containt(word.substring(1));
 	}
+	
+	/*************/
+	/*  PRIVATE  */
+	/*************/
+	
+	/**
+	 * add a node to the table of children
+	 * 
+	 * @param node the node to add
+	 */
+	private void addToTable(LetterNode node) {
+		if (children == null) {
+			children = new LetterNode[1];
+			children[0] = node;
+		} else {
+			LetterNode[] newChildren = Arrays.copyOf(children, children.length + 1);
+			newChildren[children.length] = node;
+			children = newChildren;
 
+		}
+
+	}
+	
+	
+	
+	/************/
+	/*  GETTER  */
+	/************/
+	
+	/**
+	 * simple getter of isFinal
+	 * 
+	 * @return true if the letter is the last of a word
+	 */
+	public boolean isFinal() {
+		return isFinal;
+	}
+
+	/**
+	 * getter on the char letter store in the node
+	 * 
+	 * @return the letter
+	 */
+	public char getLetter() {
+		return letter;
+	}
+	/**
+	 * getter on the children
+	 * 
+	 * @return the tab of children
+	 */
+	public LetterNode[] getSubNode() {
+		return children;
+	}
 	/**
 	 * for the debug
 	 * 
@@ -105,21 +144,4 @@ class LetterNode implements Comparable<LetterNode> {
 	public String toString() {
 		return "LetterNode [letter=" + letter + ", children=" + children + ", isFinal=" + isFinal + "]";
 	}
-
-//	public Collection<LetterNode> getSubNode() {
-	public LetterNode[] getSubNode() {
-		return children;
-//		return childrens== null ? null : childrens.values();
-	}
-
-	public void sort() {
-		Arrays.sort(this.children);
-	}
-
-	@Override
-	public int compareTo(LetterNode o) {
-		// TODO Auto-generated method stub
-		return Character.compare(letter, o.letter);
-	}
-
 }
