@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -14,7 +13,6 @@ import graph.GraphViewer;
 
 public class LexicographicTree {
 	public LetterNode root;
-	public LetterNode[] roots;
 	private int size;
 	/*
 	 * CONSTRUCTORS
@@ -31,7 +29,7 @@ public class LexicographicTree {
 	 * Constructor : creates a lexicographic tree populated with words
 	 * 
 	 * @param filename A text file containing the words to be inserted in the tree
-	 * @throws NoSuchFileException 
+	 * @throws NoSuchFileException
 	 */
 	public LexicographicTree(String filename) throws NoSuchFileException {
 
@@ -63,7 +61,7 @@ public class LexicographicTree {
 	 * 
 	 * @param word A word
 	 */
-	public void insertWord(String word) {		
+	public void insertWord(String word) {
 		if (root.linkWord(word))
 			size++;
 	}
@@ -86,14 +84,11 @@ public class LexicographicTree {
 	 * @return The list of words starting with the supplied prefix
 	 */
 	public List<String> getWords(String prefix) {
-
 		List<String> foundWord = new ArrayList<>();
 		LetterNode startNode = getNodeOfPrefix(prefix);
 		if (startNode != null) {
 			getWordform(foundWord, startNode, prefix);
 		}
-		Collections.sort(foundWord);
-
 		return foundWord;
 	}
 
@@ -110,6 +105,14 @@ public class LexicographicTree {
 
 		List<String> foundWord = getSubWord(length, root, "");
 		return foundWord;
+	}
+	/**
+	 * 
+	 * @param prefix the prefix orr the word
+	 * @return -1 is not found, 0 if found but not a word, 1 if is a word
+	 */
+	public boolean hasPrefixOrWord(String prefix) {
+		return getNodeOfPrefix(prefix) != null;
 	}
 
 	/*
@@ -163,17 +166,16 @@ public class LexicographicTree {
 		List<String> foundWord = new ArrayList<>();
 
 		for (LetterNode node : parent.getSubNode()) {
-			if(node != null)
+			if (node != null)
 				foundWord.addAll(getSubWord(n - 1, node, prefix + node.getLetter()));
 		}
-		
+
 		return foundWord;
 	}
-	
+
 	public LetterNode getRoot() {
 		return root;
 	}
-
 
 	/*
 	 * TEST FUNCTIONS
@@ -189,7 +191,7 @@ public class LexicographicTree {
 		return word;
 	}
 
-	private static void testDictionaryPerformance(String filename) throws NoSuchFileException  {
+	private static void testDictionaryPerformance(String filename) throws NoSuchFileException {
 		long startTime;
 		int repeatCount = 20;
 
@@ -204,8 +206,8 @@ public class LexicographicTree {
 		System.out.println("Number of words : " + dico.size());
 		System.out.println();
 
-//		new GraphViewer(dico);
-		
+		// new GraphViewer(dico);
+
 		// Search existing words in dictionary
 		startTime = System.currentTimeMillis();
 		System.out.println("Searching existing words in dictionary...");
@@ -294,6 +296,6 @@ public class LexicographicTree {
 		testDictionaryPerformance("mots/dictionnaire_FR_sans_accents.txt");
 
 		// CST : test de taille maximale si VM -Xms2048m -Xmx2048m
-		 testDictionarySize();
+		testDictionarySize();
 	}
 }

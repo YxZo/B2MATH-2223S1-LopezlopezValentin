@@ -36,12 +36,12 @@ public class LetterNode {
 		if (node != null) {
 			isAdd |= node.linkWord(str.substring(1));
 		} else {
-			var newNode = new LetterNode(letter);
-			this.addToTable(newNode);
-			newNode.linkWord(str.substring(1));
-			isAdd = true;
-		}
-		return isAdd;
+	        var newNode = new LetterNode(letter);
+	        this.addToTable(newNode);
+	        newNode.linkWord(str.substring(1));
+	        isAdd = true;
+	    }
+	    return isAdd;
 
 	}
 
@@ -59,13 +59,6 @@ public class LetterNode {
 		if(index>= children.length)
 			return null;
 		
-		
-
-//		for (LetterNode child : children) {
-//			if (child.letter == letter) {
-//				return child;
-//			}
-//		}
 		return children[index];
 	}
 
@@ -97,33 +90,23 @@ public class LetterNode {
 	 * @param node the node to add
 	 */
 	private void addToTable(LetterNode node) {
-		int index = getIndex(node.letter);
-		
-		
-		if (children == null) {			
-			children = new LetterNode[index+1];			
-		}else if(index >= children.length) {
-			children = Arrays.copyOf(children, index + 1);
-		}
-		
-		children[index] = node;
+	    int index = getIndex(node.letter);
 
-//		if (children == null) {
-//			children = new LetterNode[1];
-//			children[0] = node;
-//		} else {
-//			LetterNode[] newChildren = Arrays.copyOf(children, children.length + 1);
-//			newChildren[children.length] = node;
-//			children = newChildren;
-//		}
+	    if (children == null) {
+	        children = new LetterNode[index + 1];
+	    } else if (index >= children.length) {
+	        children = Arrays.copyOf(children, index + 1);
+	    }
+
+	    children[index] = node;
 	}
-	private int getIndex(char letter) {
-		int index = letter - 'a';
-		if('-' == letter)
-			index = 26;
-		else if('\'' == letter)
-			index = 27;
-		return index;
+	private static int getIndex(char letter) {
+	    int index = letter - 'a';
+	    if ('-' == letter)
+	        index = 26;
+	    else if ('\'' == letter)
+	        index = 27;
+	    return index;
 	}
 
 	/************/
