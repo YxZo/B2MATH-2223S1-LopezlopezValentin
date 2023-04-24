@@ -111,8 +111,12 @@ public class LexicographicTree {
 	 * @param prefix the prefix orr the word
 	 * @return -1 is not found, 0 if found but not a word, 1 if is a word
 	 */
-	public boolean hasPrefixOrWord(String prefix) {
-		return getNodeOfPrefix(prefix) != null;
+	public int hasPrefixOrWord(String prefix) {
+		var node = getNodeOfPrefix(prefix);
+		return (node == null) 	?-1 
+				:node.isFinal() ? 1 
+								:0 ;
+		
 	}
 
 	/*
