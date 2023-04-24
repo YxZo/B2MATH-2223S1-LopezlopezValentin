@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
+import graph.GraphViewer;
+
 public class LexicographicTree {
 	public LetterNode root;
 	public LetterNode[] roots;
@@ -36,8 +38,9 @@ public class LexicographicTree {
 		this();
 		try {
 			var list = Files.readAllLines(Paths.get(filename));
-			list.forEach((String str) -> this.insertWord(str));
+			list.forEach(str -> this.insertWord(str));
 		} catch (Exception e) {
+			System.out.println(e);
 			throw new NoSuchFileException(filename);
 		}
 	}
@@ -60,11 +63,9 @@ public class LexicographicTree {
 	 * 
 	 * @param word A word
 	 */
-	public void insertWord(String word) {
-
+	public void insertWord(String word) {		
 		if (root.linkWord(word))
 			size++;
-
 	}
 
 	/**
@@ -74,7 +75,7 @@ public class LexicographicTree {
 	 * @return True if the word is present, false otherwise
 	 */
 	public boolean containsWord(String word) {
-		return root.containt(word); // TODO
+		return root.containt(word);
 	}
 
 	/**
@@ -108,7 +109,6 @@ public class LexicographicTree {
 			return List.of();
 
 		List<String> foundWord = getSubWord(length, root, "");
-		Collections.sort(foundWord);
 		return foundWord;
 	}
 
@@ -163,9 +163,15 @@ public class LexicographicTree {
 		List<String> foundWord = new ArrayList<>();
 
 		for (LetterNode node : parent.getSubNode()) {
-			foundWord.addAll(getSubWord(n - 1, node, prefix + node.getLetter()));
-		}		
+			if(node != null)
+				foundWord.addAll(getSubWord(n - 1, node, prefix + node.getLetter()));
+		}
+		
 		return foundWord;
+	}
+	
+	public LetterNode getRoot() {
+		return root;
 	}
 
 
@@ -198,6 +204,8 @@ public class LexicographicTree {
 		System.out.println("Number of words : " + dico.size());
 		System.out.println();
 
+//		new GraphViewer(dico);
+		
 		// Search existing words in dictionary
 		startTime = System.currentTimeMillis();
 		System.out.println("Searching existing words in dictionary...");

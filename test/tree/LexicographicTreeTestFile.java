@@ -138,9 +138,8 @@ public class LexicographicTreeTestFile {
 		tree.insertWord("oiseau");
 
 		List<String> wordsOfLength = tree.getWordsOfLength(4);
-		assertEquals(2, wordsOfLength.size());
+		assertEquals(1, wordsOfLength.size());
 		assertTrue(wordsOfLength.contains("chat"));
-		assertTrue(wordsOfLength.contains("chien"));
 	}
 
 }

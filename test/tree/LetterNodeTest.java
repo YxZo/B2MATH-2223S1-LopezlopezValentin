@@ -10,7 +10,7 @@ class LetterNodeTest {
 
 	@Test
 	void testLetterNode() {
-		LetterNode node = new LetterNode('a');
+//		LetterNode node = new LetterNode('a');
 		
 		//LetterNode nodeFount = node.getLinkTo('p');
 		//assertNull(nodeFount);
@@ -20,8 +20,8 @@ class LetterNodeTest {
 //		node.linkWord("eee");
 //		
 //		System.out.println(node);
-		System.out.println(Byte.SIZE);
-		System.out.println(Character.SIZE);
+//		System.out.println(Byte.SIZE);
+//		System.out.println(Character.SIZE);
 	}
 
 }
