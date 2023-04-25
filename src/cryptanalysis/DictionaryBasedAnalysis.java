@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import tree.LexicographicTree;
 
@@ -55,30 +57,51 @@ public class DictionaryBasedAnalysis {
 	 * @return The decoding alphabet at the end of the analysis process
 	 */
 	public String guessApproximatedAlphabet(String alphabet) {
+		int i = 0;
 		for (String word : cryptogramWord) {
-			int[] frenquencyWordCrypt = getFrenquency(word);
-			System.out.println("the frequency of crypt (" + word + ") :");
-			System.out.println("\t" + Arrays.toString(frenquencyWordCrypt));
-			System.out.println();
+			word = applySubstitution(word, alphabet);
+			var frenquencyWordCrypt = getFrenquency(word);
+//			System.out.println("the frequency of crypt (" + word + ") :");
+//			System.out.println("\t\t" + frenquencyWordCrypt);
+//			System.out.println();
 
 			if (dict.containsWord(word))
 				continue;
 			var listWordPossible = dict.getWordsOfLength(word.length());
 
 			for (String foundWord : listWordPossible) {
-				System.out.println("\tword found :" + foundWord);
-				if(!foundWord.contains())
-					continue;
-				int[] frenquencyWordDict = getFrenquency(foundWord);
 
-				System.out.println("\t\t" + Arrays.toString(frenquencyWordDict));
-				System.out.println();
+				if (foundWord.contains("-") || foundWord.contains("\'"))
+					continue;
+				var frenquencyWordDict = getFrenquency(foundWord);
+
+				if (frenquencyWordDict.equals(frenquencyWordCrypt)) {
+
+//					System.out.println("-----------------------");
+//					System.out.println("\tword found :" + foundWord);
+//					System.out.println("\t\t" + frenquencyWordDict);
+//					System.out.println();
+					int index = 0;
+					for (int frequence : frenquencyWordDict) {
+						index += frequence - 1;
+						char letter = foundWord.charAt(index);
+
+						alphabet = swapLetterAlpha(alphabet, letter, word.charAt(index));
+//						System.out.println("the alphabet is now : " + alphabet);
+					}
+
+				}
+
 			}
-			System.out.println("============================");
-			break;
+//			System.out.println("============================");
+			if(i++ %100 == 0) {
+				System.out.println("en cours "+i+ " sur "+ this.cryptogramWord.size());
+				System.out.println("the alpahbet actual :" + alphabet);
+			}
+			
 		}
 
-		return ""; // TODO
+		return alphabet; // TODO
 	}
 
 	/**
@@ -89,7 +112,15 @@ public class DictionaryBasedAnalysis {
 	 * @return The substituted text
 	 */
 	public static String applySubstitution(String text, String alphabet) {
-		return ""; // TODO
+		StringBuilder sb = new StringBuilder();
+	    for (char c : text.toCharArray()) {
+	        if (Character.isUpperCase(c)) {
+	            sb.append(alphabet.charAt(c - 'A'));
+	        } else {
+	            sb.append(c);
+	        }
+	    }
+	    return sb.toString(); // TODO
 	}
 
 	/*
@@ -128,12 +159,23 @@ public class DictionaryBasedAnalysis {
 		return data;
 	}
 
-	private int[] getFrenquency(String word) {
-		int[] frenquency = new int[26];
-		for (char c : word.toUpperCase().toCharArray()) {
-			frenquency[LETTERS.indexOf(c)]++;
+	private List<Integer> getFrenquency(String word) {
+		Map<Character, Integer> frequences = new HashMap<>();
+		for (char car : word.toCharArray()) {
+			frequences.put(car, frequences.getOrDefault(car, 0) + 1);
 		}
-		return frenquency;
+		return new ArrayList<>(frequences.values());
+	}
+
+	private String swapLetterAlpha(String alpha, char letter1, char letter2) {
+		int indexL1 = alpha.indexOf(Character.toUpperCase(letter1));
+		int indexL2 = alpha.indexOf(Character.toUpperCase(letter2));
+		char[] charArray = alpha.toCharArray();
+		
+		char temp = charArray[indexL1];
+		charArray[indexL1] = charArray[indexL2];
+		charArray[indexL2] = temp;
+		return new String(charArray);
 	}
 
 	/*
@@ -165,11 +207,11 @@ public class DictionaryBasedAnalysis {
 		String finalAlphabet = dba.guessApproximatedAlphabet(startAlphabet);
 //		
 //		// Display final results
-//		System.out.println();
-//		System.out.println("Decoding     alphabet : " + DECODING_ALPHABET);
-//		System.out.println("Approximated alphabet : " + finalAlphabet);
-//		System.out.println("Remaining differences : " + compareAlphabets(DECODING_ALPHABET, finalAlphabet));
-//		System.out.println();
+		System.out.println();
+		System.out.println("Decoding     alphabet : " + DECODING_ALPHABET);
+		System.out.println("Approximated alphabet : " + finalAlphabet);
+		System.out.println("Remaining differences : " + compareAlphabets(DECODING_ALPHABET, finalAlphabet));
+		System.out.println();
 //		
 //		// Display decoded text
 //		System.out.println("*** DECODED TEXT ***\n" + applySubstitution(cryptogram, finalAlphabet).substring(0, 200));

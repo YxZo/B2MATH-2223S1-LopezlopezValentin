@@ -38,7 +38,6 @@ public class LexicographicTree {
 			var list = Files.readAllLines(Paths.get(filename));
 			list.forEach(str -> this.insertWord(str));
 		} catch (Exception e) {
-			System.out.println(e);
 			throw new NoSuchFileException(filename);
 		}
 	}
