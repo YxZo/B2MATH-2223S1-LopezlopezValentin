@@ -58,7 +58,6 @@ public class LetterNode {
 		int index = getIndex(letter);
 		if(index>= children.length)
 			return null;
-		
 		return children[index];
 	}
 

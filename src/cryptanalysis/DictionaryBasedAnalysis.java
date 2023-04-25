@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -31,15 +32,14 @@ public class DictionaryBasedAnalysis {
 		this.dict = dict;
 		this.cryptogramWord = new ArrayList<>();
 		for (String word : cryptogram.split("\\s+")) {
-			cryptogramWord.add(word);
+			cryptogramWord.add(word.toLowerCase());
 		}
 		Collections.sort(cryptogramWord, new Comparator<String>() {
-            @Override
-            public int compare(String s1, String s2) {
-                return Integer.compare(s2.length(), s1.length());
-            }
-        });
-		System.out.println(cryptogramWord);
+			@Override
+			public int compare(String s1, String s2) {
+				return Integer.compare(s2.length(), s1.length());
+			}
+		});
 
 	}
 
@@ -55,6 +55,28 @@ public class DictionaryBasedAnalysis {
 	 * @return The decoding alphabet at the end of the analysis process
 	 */
 	public String guessApproximatedAlphabet(String alphabet) {
+		for (String word : cryptogramWord) {
+			int[] frenquencyWordCrypt = getFrenquency(word);
+			System.out.println("the frequency of crypt (" + word + ") :");
+			System.out.println("\t" + Arrays.toString(frenquencyWordCrypt));
+			System.out.println();
+
+			if (dict.containsWord(word))
+				continue;
+			var listWordPossible = dict.getWordsOfLength(word.length());
+
+			for (String foundWord : listWordPossible) {
+				System.out.println("\tword found :" + foundWord);
+				if(!foundWord.contains())
+					continue;
+				int[] frenquencyWordDict = getFrenquency(foundWord);
+
+				System.out.println("\t\t" + Arrays.toString(frenquencyWordDict));
+				System.out.println();
+			}
+			System.out.println("============================");
+			break;
+		}
 
 		return ""; // TODO
 	}
@@ -106,6 +128,14 @@ public class DictionaryBasedAnalysis {
 		return data;
 	}
 
+	private int[] getFrenquency(String word) {
+		int[] frenquency = new int[26];
+		for (char c : word.toUpperCase().toCharArray()) {
+			frenquency[LETTERS.indexOf(c)]++;
+		}
+		return frenquency;
+	}
+
 	/*
 	 * MAIN PROGRAM
 	 */
@@ -130,9 +160,9 @@ public class DictionaryBasedAnalysis {
 		 * Decode cryptogram
 		 */
 		DictionaryBasedAnalysis dba = new DictionaryBasedAnalysis(cryptogram, dict);
-//		String startAlphabet = LETTERS;
-////		String startAlphabet = "ZISHNFOBMAVQLPEUGWXTDYRJKC"; // Random alphabet
-//		String finalAlphabet = dba.guessApproximatedAlphabet(startAlphabet);
+		String startAlphabet = LETTERS;
+//		String startAlphabet = "ZISHNFOBMAVQLPEUGWXTDYRJKC"; // Random alphabet
+		String finalAlphabet = dba.guessApproximatedAlphabet(startAlphabet);
 //		
 //		// Display final results
 //		System.out.println();
