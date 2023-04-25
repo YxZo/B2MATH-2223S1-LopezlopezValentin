@@ -12,7 +12,7 @@ import java.util.Scanner;
 import graph.GraphViewer;
 
 public class LexicographicTree {
-	public LetterNode root;
+	private LetterNode root;
 	private int size;
 	/*
 	 * CONSTRUCTORS
