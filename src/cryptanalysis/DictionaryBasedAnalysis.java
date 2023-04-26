@@ -188,6 +188,7 @@ public class DictionaryBasedAnalysis {
 		
 		return wordSubstitued;
 	}
+	
 
 	/*
 	 * MAIN PROGRAM
