@@ -34,6 +34,7 @@ public class DictionaryBasedAnalysis {
 		this.dict = dict;
 		this.cryptogramWord = new ArrayList<>();
 		for (String word : cryptogram.split("\\s+")) {
+			if(word.length()> 3)
 			cryptogramWord.add(word.toLowerCase());
 		}
 		Collections.sort(cryptogramWord, new Comparator<String>() {
@@ -177,12 +178,26 @@ public class DictionaryBasedAnalysis {
 		charArray[indexL2] = temp;
 		return new String(charArray);
 	}
+	
+	private String applySubstitutionWord(String word, String alphabet) {	
+		
+		String wordSubstitued ="";
+		for(char c: word.toUpperCase().toCharArray()) {
+			wordSubstitued += LETTERS.charAt(alphabet.indexOf(c));
+		}
+		
+		return wordSubstitued;
+	}
 
 	/*
 	 * MAIN PROGRAM
 	 */
 
 	public static void main(String[] args) throws NoSuchFileException {
+		
+		
+		
+		
 		/*
 		 * Load dictionary
 		 */
@@ -202,16 +217,18 @@ public class DictionaryBasedAnalysis {
 		 * Decode cryptogram
 		 */
 		DictionaryBasedAnalysis dba = new DictionaryBasedAnalysis(cryptogram, dict);
+		
+		System.out.println(dba.applySubstitutionWord("Plus", "VNSTBIQLWOZUEJMRYGCPDKHXAF"));
 		String startAlphabet = LETTERS;
 //		String startAlphabet = "ZISHNFOBMAVQLPEUGWXTDYRJKC"; // Random alphabet
-		String finalAlphabet = dba.guessApproximatedAlphabet(startAlphabet);
+//		String finalAlphabet = dba.guessApproximatedAlphabet(startAlphabet);
 //		
 //		// Display final results
-		System.out.println();
-		System.out.println("Decoding     alphabet : " + DECODING_ALPHABET);
-		System.out.println("Approximated alphabet : " + finalAlphabet);
-		System.out.println("Remaining differences : " + compareAlphabets(DECODING_ALPHABET, finalAlphabet));
-		System.out.println();
+//		System.out.println();
+//		System.out.println("Decoding     alphabet : " + DECODING_ALPHABET);
+//		System.out.println("Approximated alphabet : " + finalAlphabet);
+//		System.out.println("Remaining differences : " + compareAlphabets(DECODING_ALPHABET, finalAlphabet));
+//		System.out.println();
 //		
 //		// Display decoded text
 //		System.out.println("*** DECODED TEXT ***\n" + applySubstitution(cryptogram, finalAlphabet).substring(0, 200));
