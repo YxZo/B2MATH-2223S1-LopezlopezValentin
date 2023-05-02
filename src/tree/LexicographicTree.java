@@ -1,5 +1,7 @@
 package tree;
 
+import static org.junit.jupiter.api.DynamicTest.stream;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Files;
@@ -8,8 +10,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
-import graph.GraphViewer;
+import java.util.stream.Stream;
 
 public class LexicographicTree {
 	private LetterNode root;
@@ -31,14 +32,15 @@ public class LexicographicTree {
 	 * @param filename A text file containing the words to be inserted in the tree
 	 * @throws NoSuchFileException
 	 */
-	public LexicographicTree(String filename) throws NoSuchFileException {
+	public LexicographicTree(String filename){
 
 		this();
 		try {
 			var list = Files.readAllLines(Paths.get(filename));
 			list.forEach(str -> this.insertWord(str));
 		} catch (Exception e) {
-			throw new NoSuchFileException(filename);
+			//ici pour ne pas avoir des erreurs dans le testes et tout de meme pouvoir gere le faite que l'erreur soit lance
+			throw new RuntimeException(new NoSuchFileException(filename));
 		}
 	}
 
@@ -58,7 +60,7 @@ public class LexicographicTree {
 	/**
 	 * Inserts a word in the lexicographic tree if not already present.
 	 * 
-	 * @param word A word
+	 * @param word A word to insert
 	 */
 	public void insertWord(String word) {
 		if (root.linkWord(word))
@@ -107,14 +109,14 @@ public class LexicographicTree {
 	}
 	/**
 	 * 
-	 * @param prefix the prefix orr the word
+	 * @param prefix the prefix or the word
 	 * @return -1 is not found, 0 if found but not a word, 1 if is a word
 	 */
 	public int hasPrefixOrWord(String prefix) {
 		var node = getNodeOfPrefix(prefix);
-		return (node == null) 	?-1 
-				:node.isFinal() ? 1 
-								:0 ;
+		return  (node == null) ? -1 
+			  : node.isFinal() ?  1 
+				  			   :  0;
 		
 	}
 
@@ -285,7 +287,6 @@ public class LexicographicTree {
 			count++;
 			if (count % MB == 0) {
 				System.out.println(count / MB + "M -> " + Runtime.getRuntime().freeMemory() / MB);
-
 			}
 		}
 	}

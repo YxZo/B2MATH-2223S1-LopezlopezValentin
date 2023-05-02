@@ -10,17 +10,13 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
-import graph.GraphViewer;
 import tree.LexicographicTree;
 
 public class Boggle {
 
-	private static final int[] ROWS = { -1, -1, -1, 0, 0, 1, 1, 1 };
-	private static final int[] COLS = { -1, 0, 1, -1, 1, -1, 0, 1 };
-
 	private LexicographicTree dictionary;
 	private char[][] board;
-	private int size;
+	private final int size;
 	private Graph<BoggleNode, DefaultWeightedEdge> graph;
 
 	/*
@@ -103,7 +99,7 @@ public class Boggle {
 	 * @return the set of found words
 	 */
 	public Set<String> solve() {
-
+		
 		Set<String> allWord = new HashSet<>();
 
 		for (BoggleNode node : graph.vertexSet()) {
@@ -151,20 +147,18 @@ public class Boggle {
 		if (num == -1)
 			return;
 
-		node.setVisited(true);
-
+		node.setVisited(true);		
+		
 		for (DefaultWeightedEdge edge : graph.edgesOf(node)) {
-//			System.out.println("main node :"+ node);
-//			System.out.println("edge node :"+edge);
-			BoggleNode sourceNode = graph.getEdgeSource(edge);
-//	        System.out.println("sourceNode node :"+sourceNode);
-			BoggleNode targetNode = graph.getEdgeTarget(edge);
-//	        System.out.println("targetNode node :"+targetNode);
-//	        System.out.println();
-			searchForOneLetter(sourceNode.equals(node) ? targetNode : sourceNode, currentWord, allWord);
+			searchForOneLetter(getNeighborOfEdge(edge, node), currentWord, allWord);
 		}
 
 		node.setVisited(false);
+	}
+	private BoggleNode getNeighborOfEdge(DefaultWeightedEdge edge, BoggleNode node) {
+		BoggleNode sourceNode = graph.getEdgeSource(edge);
+		BoggleNode targetNode = graph.getEdgeTarget(edge);
+		return sourceNode.equals(node) ? targetNode : sourceNode;
 	}
 
 	private boolean searchForStr(BoggleNode node, String currentWord, String str) {
@@ -183,9 +177,7 @@ public class Boggle {
 		boolean isIn = false;
 		node.setVisited(true);
 		for (DefaultWeightedEdge edge : graph.edgesOf(node)) {
-			BoggleNode sourceNode = graph.getEdgeSource(edge);
-			BoggleNode targetNode = graph.getEdgeTarget(edge);
-			isIn |= searchForStr(sourceNode.equals(node) ? targetNode : sourceNode, currentWord, str);
+			isIn |= searchForStr(getNeighborOfEdge(edge, node), currentWord, str);
 			if (isIn)
 				break;
 		}
@@ -200,24 +192,20 @@ public class Boggle {
 	    BoggleNode[][] boggleNodes = new BoggleNode[size][size];
 	    for (int i = 0; i < size; i++) {
 	        for (int j = 0; j < size; j++) {
-	            boggleNodes[i][j] = new BoggleNode(i, j, board[i][j]);
+	            boggleNodes[i][j] = new BoggleNode(board[i][j]);
 	            boggleGraph.addVertex(boggleNodes[i][j]);
 	        }
 	    }
 
 	    // Connexion des sommets adjacents
-	    int[][] directions = {
-	        {-1, -1}, {-1, 0}, {-1, 1},
-	        {0, -1},           {0, 1},
-	        {1, -1}, {1, 0}, {1, 1}
-	    };
+		int[][] directions = {{-1, -1}, {-1, 0}, {-1, 1},{0, -1},{1, -1}, {1, 0}, {1, 1}};
 
 	    for (int i = 0; i < size; i++) {
 	        for (int j = 0; j < size; j++) {
 	            for (int[] direction : directions) {
 	                int newRow = i + direction[0];
 	                int newCol = j + direction[1];
-
+	                
 	                if (isValidCoordinate(newRow, newCol, size)) {
 	                    boggleGraph.addEdge(boggleNodes[i][j], boggleNodes[newRow][newCol]);
 	                }

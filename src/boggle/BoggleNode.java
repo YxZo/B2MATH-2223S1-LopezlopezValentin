@@ -1,17 +1,8 @@
 package boggle;
 
 public class BoggleNode {
-	 private int row;
-	 private int col;
 	 private char value;
 	 private boolean isVisited;
-
-	 @Deprecated
-     public BoggleNode(int row, int col, char value) {
-         this.row = row;
-         this.col = col;
-         this.value = value;
-     }
      
      public BoggleNode(char value) {
          this.value = value;
@@ -33,8 +24,5 @@ public class BoggleNode {
 	public void setVisited(boolean isVisited) {
 		this.isVisited = isVisited;
 	}
-	
-	
-	
 	
 }
