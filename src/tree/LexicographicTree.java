@@ -103,8 +103,8 @@ public class LexicographicTree {
 	public List<String> getWordsOfLength(int length) {
 		if (length <= 0)
 			return List.of();
-
-		List<String> foundWord = getSubWord(length, root, "");
+		List<String> foundWord = new ArrayList<>();
+		getSubWord(length, root, "", foundWord);
 		return foundWord;
 	}
 	/**
@@ -158,24 +158,23 @@ public class LexicographicTree {
 
 	}
 
-	private List<String> getSubWord(int n, LetterNode parent, String prefix) {
+	private void getSubWord(int n, LetterNode parent, String prefix, List<String> foundWord) {
 		if (n <= 0) {
-			if (parent.isFinal())
-				return List.of(prefix);
+			if (parent.isFinal()) {
+				foundWord.add(prefix);
+				return;
+			}				
 			else
-				return List.of();
+				return ;
 		}
 		if (parent.getSubNode() == null) {
-			return List.of();
+			return;
 		}
-		List<String> foundWord = new ArrayList<>();
 
 		for (LetterNode node : parent.getSubNode()) {
 			if (node != null)
-				foundWord.addAll(getSubWord(n - 1, node, prefix + node.getLetter()));
+				getSubWord(n - 1, node, prefix + node.getLetter(), foundWord);
 		}
-
-		return foundWord;
 	}
 
 	public LetterNode getRoot() {
