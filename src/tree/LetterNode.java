@@ -29,7 +29,7 @@ public class LetterNode {
 		if (str == null || str.length() == 0) {
 			isFinal = true;
 			return false;
-		}
+		}		
 		boolean isAdd = false;
 		char letter = str.charAt(0);
 		var node = this.getLinkTo(letter);

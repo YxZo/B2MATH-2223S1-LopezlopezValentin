@@ -32,8 +32,11 @@ public class DictionaryBasedAnalysis {
 	 */
 	public DictionaryBasedAnalysis(String cryptogram, LexicographicTree dict) {
 
-		cryptogramWords = Arrays.stream(cryptogram.split("\\s+")).filter(this::filterCrypto).sorted(this::comparelength)
-				.distinct().collect(Collectors.toList());
+		cryptogramWords = Arrays.stream(cryptogram.split("\\s+"))
+				.filter(this::filterCrypto)
+				.sorted(this::comparelength)
+				.distinct()
+				.collect(Collectors.toList());
 		this.dict = dict;
 
 	}
@@ -50,11 +53,9 @@ public class DictionaryBasedAnalysis {
 	 * @return The decoding alphabet at the end of the analysis process
 	 */
 	public String guessApproximatedAlphabet(String alphabet) {
-		// System.out.println(this.cryptogramWords.size() +"\t944");
 		List<String> wordOfLength = new ArrayList<>();
 		String betterAlphabet = alphabet;
 		int scoreBetterAlphabet = 0;
-		//System.out.println(cryptogramWords.size());
 		for (String cryptWord : cryptogramWords) {
 //			int score = getScoreAlphabet(alphabet);
 //			
@@ -76,7 +77,6 @@ public class DictionaryBasedAnalysis {
 					int score = getScoreAlphabet(alphabet);
 					
 					if(scoreBetterAlphabet <= score) {
-						//System.out.println(betterAlphabet);
 						betterAlphabet = alphabet;
 						scoreBetterAlphabet = score;
 						break;
@@ -84,10 +84,6 @@ public class DictionaryBasedAnalysis {
 				}
 				
 			}
-
-			
-			
-
 		}
 		return betterAlphabet;
 	}
