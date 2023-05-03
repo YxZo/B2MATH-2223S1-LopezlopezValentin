@@ -31,7 +31,9 @@ public class DictionaryBasedAnalysis {
 	 */
 	public DictionaryBasedAnalysis(String cryptogram, LexicographicTree dict) {
 
-		cryptogramWords = Arrays.stream(cryptogram.split("\\s+")).filter(this::isLongEnough).sorted(this::comparelength)
+		cryptogramWords = Arrays.stream(cryptogram.split("\\s+"))
+				.filter(this::isLongEnough)
+				.sorted(this::comparelength)
 				.distinct().collect(Collectors.toList());
 		this.dict = dict;
 
@@ -50,7 +52,7 @@ public class DictionaryBasedAnalysis {
 	 */
 	public String guessApproximatedAlphabet(String alphabet) {
 
-		return guessAlphabet(alphabet, cryptogramWords, 0);
+		return guessAlphabet(alphabet);
 
 	}
 
@@ -65,10 +67,8 @@ public class DictionaryBasedAnalysis {
 		String wordSubstitued = "";
 		for (char c : text.toUpperCase().toCharArray()) {
 			int index = LETTERS.indexOf(c);
-
 			wordSubstitued += index >= 0 ? alphabet.charAt(index) : c;
 		}
-
 		return wordSubstitued;
 	}
 
@@ -110,7 +110,16 @@ public class DictionaryBasedAnalysis {
 
 	// methode pour le stream le tri des mots
 	private boolean isLongEnough(String word) {
-		return word.length() > 3;
+		var fre = getFrenquency(word);
+		boolean is = false;
+		for (int i : fre) {
+			System.out.println(i);
+			if(i>2) {
+				is = true;
+				break;
+			}
+		}
+		return is && word.length() > 3;
 	}
 
 	private int comparelength(String o1, String o2) {
@@ -120,105 +129,99 @@ public class DictionaryBasedAnalysis {
 		return o2.compareTo(o1);
 	}
 
-	private String guessAlphabet(String alphabet, List<String> allWordCrypt, int numWordDecrypt) {
+	private String guessAlphabet(String alphabet) {
 
 		// copy de la list pour la remmetre a 0 et ajouter que les mots non trouver dans
 		// le dictionnaire
-		List<String> noDecryptWords = new ArrayList<>();
+		int alphaScore = 0;
+		int oldAlphaScrore = 0;
+		String betterAlpha = alphabet;
+		int i = 0;
+		do {
 
-		// application of the substitution
-		for (int i = 0; i < allWordCrypt.size(); i++) {
-			String decrypt = applySubstitution(allWordCrypt.get(i), alphabet);
-			if (!dict.containsWord(decrypt.toLowerCase())) {
-				noDecryptWords.add(decrypt);
+			oldAlphaScrore = alphaScore;
+
+			// application of the substitution
+			for (int j = 0; j < this.cryptogramWords.size(); j++) {
+				String decrypt = applySubstitution(this.cryptogramWords.get(j), alphabet);
+				if (dict.containsWord(decrypt.toLowerCase())) {
+					alphaScore++;
+				}
+			}
+			// get better alpha
+			if (oldAlphaScrore <= alphaScore) {
+				betterAlpha = alphabet;
+				//System.out.println(betterAlpha + "is the best alpha");
 			}
 
-		}
-		int numDecrypt = this.cryptogramWords.size() - noDecryptWords.size();
+			var cryptWord = cryptogramWords.get(i);
+			var wordLength = dict.getWordsOfLength(cryptWord.length());
+			for (String wordDict : wordLength) {
+				if (isCompatible(wordDict, cryptWord)) {
+					alphabet = makeAlpha(wordDict, cryptWord, alphabet);
+					break;
+				}
+			}
+			i++;
+			// break;
+			// analise of the longest word
+			System.out.println(i + " sur " + cryptogramWords.size());
 
-//		if (numDecrypt> 0 && numDecrypt == numWordDecrypt)
-//			return alphabet;
-		System.out.println(noDecryptWords.size());
-		if (noDecryptWords.isEmpty())
-			return alphabet;
+		} while (i < this.cryptogramWords.size());
 
-		//System.out.println(noDecryptWords.size());
-		
-		
-		// analise of the longest word
-
-		alphabet = analyse(alphabet, noDecryptWords, numDecrypt);
-
-		alphabet = guessAlphabet(alphabet, noDecryptWords, numDecrypt);
-
-		return alphabet;
+		return betterAlpha;
 
 	}
 
-	private String analyse(String currentAlpha, List<String> allWordCrypt, int numDecrypt) {
-		//System.out.println(numDecrypt);
-		for (int i = numDecrypt; i < allWordCrypt.size(); i++) {
-			var word  = allWordCrypt.get(i);
-//			System.out.println("lancement du traitement pour :" + word+ "\nqui est en vrai :" +applySubstitution(word, DECODING_ALPHABET) );
-//			System.out.println();
-			List<String> wordFound = dict.getWordsOfLength(word.length());
-			//System.out.println(wordFound);
-			for (String dictWord : wordFound) {
-				// si compatible alors lancer le changement de l'alpha
-				if (isCompatible(dictWord, word)) {
-//					System.out.println(dictWord + " trouver !!!");
-					var newAlpha = updataAlpha(word, dictWord.toUpperCase(), currentAlpha);
-					System.out.println("l'alpha devient: " + newAlpha);
-					return newAlpha;
-				}
+	private String makeAlpha(String wordDict, String cryptWord, String alpha) {
+		for (int i = 0; i < wordDict.length(); i++) {
+			char letterDict = wordDict.toUpperCase().charAt(i);
+			char letterCrypt = cryptWord.charAt(i);
+			alpha = swapLetters(alpha, alpha.indexOf(letterDict), alpha.indexOf(letterCrypt));
 
-			}
-
-			// suppression car pas de correspondance dans le dic
-			allWordCrypt.remove(i);
-			//System.out.println("rien de trouver\nnombre de mon restant:" + allWordCrypt.size());
-			//break;
 		}
 
-		return currentAlpha;
+		return alpha;
+	}
+
+	public String swapLetters(String str, int i, int j) {
+		char[] chars = str.toCharArray();
+		char temp = chars[i];
+		chars[i] = chars[j];
+		chars[j] = temp;
+		return new String(chars);
 	}
 
 	private boolean isCompatible(String dictWord, String currentWord) {
 		var frequenceDictWord = getFrenquency(dictWord);
 		var frequenceCurrentWord = getFrenquency(currentWord);
-//		if(applySubstitution(currentWord, DECODING_ALPHABET).toLowerCase().equals(dictWord)) {
-//			System.out.println(frequenceDictWord);
-//			System.out.println(frequenceCurrentWord);
-//		}
-		
-		
-		return frequenceCurrentWord.equals(frequenceDictWord);
+
+		return !dictWord.contains("\'") && !dictWord.contains("-")
+				&& frequenceDictWord.length == frequenceCurrentWord.length
+				&& Arrays.equals(frequenceDictWord, frequenceCurrentWord);
 	}
-	private List<Integer> getFrenquency(String word) {
-		Map<Character, Integer> frequences = new HashMap<>();
-		for (char car : word.toCharArray()) {
-			frequences.put(car, frequences.getOrDefault(car, 0) + 1);
-		}
-		var freq = new ArrayList<>(frequences.values());
-		Collections.sort(freq);
-		return freq;
-	}
-	private String updataAlpha(String crypt, String dictWord, String alpha) {
-		char[] alphaTb = alpha.toCharArray();
-		
-		for (int i = 0; i < crypt.length(); i++) {
-			var goodLetter = dictWord.toUpperCase().charAt(i);
-			var cryptLetter = crypt.charAt(i);
-			
-			if(dictWord.indexOf(goodLetter) == i && crypt.indexOf(cryptLetter) == i ) {
-				var temp = alphaTb[alpha.indexOf(goodLetter)];
-				alphaTb[alpha.indexOf(goodLetter)] = alphaTb[alpha.indexOf(cryptLetter)];
-				alphaTb[alpha.indexOf(cryptLetter)]= temp;
+
+	private int[] getFrenquency(String word) {
+		// TODO condition de verif
+		int[] frenquency = new int[] { 1 };
+
+		var letters = word.toCharArray();
+		for (int i = 1; i < letters.length; i++) {
+			if (letters[i] == letters[i - 1]) {
+				frenquency[frenquency.length - 1]++;
+			} else {
+				frenquency = Arrays.copyOf(frenquency, frenquency.length + 1);
+				frenquency[frenquency.length - 1]++;
 			}
 		}
+
+		return frenquency;
+	}
+	
+	private boolean isUtil(String word) {
+		Map<Character, Integer> fr = new HashMap<>();
 		
-		
-		return new String(alphaTb);
+		return true;
 	}
 
 	/*
@@ -245,8 +248,8 @@ public class DictionaryBasedAnalysis {
 		 * Decode cryptogram
 		 */
 		DictionaryBasedAnalysis dba = new DictionaryBasedAnalysis(cryptogram, dict);
-		String startAlphabet = LETTERS;
-//		String startAlphabet = DECODING_ALPHABET;
+//		String startAlphabet = LETTERS;
+		String startAlphabet = DECODING_ALPHABET;
 //		String startAlphabet = "ZISHNFOBMAVQLPEUGWXTDYRJKC"; // Random alphabet
 		String finalAlphabet = dba.guessApproximatedAlphabet(startAlphabet);
 
