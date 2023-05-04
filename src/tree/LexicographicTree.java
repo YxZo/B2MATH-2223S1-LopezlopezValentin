@@ -298,6 +298,6 @@ public class LexicographicTree {
 		testDictionaryPerformance("mots/dictionnaire_FR_sans_accents.txt");
 
 		// CST : test de taille maximale si VM -Xms2048m -Xmx2048m
-		testDictionarySize();
+		// testDictionarySize();
 	}
 }
