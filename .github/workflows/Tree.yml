@@ -20,4 +20,4 @@ jobs:
         run: javac src/tree/LetterNode.java src/tree/LexicographicTree.java
 
       - name: run
-        run: java -cp src tree.LexicographicTree
+        run: java -Xms2048m -Xmx2048m -cp src tree.LexicographicTree

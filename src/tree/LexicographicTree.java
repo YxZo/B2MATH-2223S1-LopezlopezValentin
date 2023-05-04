@@ -29,14 +29,15 @@ public class LexicographicTree {
 	 * @param filename A text file containing the words to be inserted in the tree
 	 * @throws NoSuchFileException
 	 */
-	public LexicographicTree(String filename){
+	public LexicographicTree(String filename) {
 
 		this();
 		try {
 			var list = Files.readAllLines(Paths.get(filename));
 			list.forEach(str -> this.insertWord(str));
 		} catch (Exception e) {
-			//ici pour ne pas avoir des erreurs dans le testes et tout de meme pouvoir gere le faite que l'erreur soit lance
+			// ici pour ne pas avoir des erreurs dans le testes et tout de meme pouvoir gere
+			// le faite que l'erreur soit lance
 			throw new RuntimeException(new NoSuchFileException(filename));
 		}
 	}
@@ -104,6 +105,7 @@ public class LexicographicTree {
 		getSubWord(length, root, "", foundWord);
 		return foundWord;
 	}
+
 	/**
 	 * 
 	 * @param prefix the prefix or the word
@@ -111,10 +113,10 @@ public class LexicographicTree {
 	 */
 	public int hasPrefixOrWord(String prefix) {
 		var node = getNodeOfPrefix(prefix);
-		return  (node == null) ? -1 
-			  : node.isFinal() ?  1 
-				  			   :  0;
-		
+		return (node == null) ? -1
+				: node.isFinal() ? 1
+						: 0;
+
 	}
 
 	/*
@@ -160,9 +162,8 @@ public class LexicographicTree {
 			if (parent.isFinal()) {
 				foundWord.add(prefix);
 				return;
-			}				
-			else
-				return ;
+			} else
+				return;
 		}
 		if (parent.getSubNode() == null) {
 			return;
@@ -292,6 +293,7 @@ public class LexicographicTree {
 	 */
 
 	public static void main(String[] args) throws NoSuchFileException {
+
 		// CTT : test de performance insertion/recherche
 		testDictionaryPerformance("mots/dictionnaire_FR_sans_accents.txt");
 
