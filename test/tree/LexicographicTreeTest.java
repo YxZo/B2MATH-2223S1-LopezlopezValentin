@@ -22,7 +22,7 @@ public class LexicographicTreeTest {
 	private static final LexicographicTree DICT = new LexicographicTree();
 
 	@BeforeAll
-	static void initTestDictionary() {
+	public static void initTestDictionary() {
 		for (int i = 0; i < WORDS.length; i++) {
 			DICT.insertWord(WORDS[i]);
 		}
@@ -46,7 +46,7 @@ public class LexicographicTreeTest {
 			assertEquals(i + 1, dict.size(), "Mot " + WORDS[i] + " en double");
 		}
 	}
-
+	
 	@Test
 	void containsWord_General() {
 		for (String word : WORDS) {
@@ -298,6 +298,7 @@ public class LexicographicTreeTest {
 	    void testGetWords(String insertedWord, String prefix, int expectedSize) {
 	    	LexicographicTree tree = new LexicographicTree();
 	        tree.insertWord(insertedWord);
+	        System.out.println();
 
 	        List<String> wordsWithPrefix = tree.getWords(prefix);
 	        assertEquals(expectedSize, wordsWithPrefix.size());

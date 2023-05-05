@@ -155,7 +155,7 @@ public class DictionaryBasedAnalysis {
 
 	private boolean filterCrypto(String word) {
 		var frequ = getFrenquency(word);		
-		return word.length() > 3 && frequ.get(frequ.size() - 1) >= 2;
+		return word.length() > 3 && frequ.get(frequ.size() - 1) >= 4;
 	}
 
 	private int comparelength(String o1, String o2) {
