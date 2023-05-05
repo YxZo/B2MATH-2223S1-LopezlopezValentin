@@ -9,12 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import boggle.Boggle;
+
 public class LexicographicTree {
 	private LetterNode root;
 	private int size;
-	/*
-	 * CONSTRUCTORS
-	 */
+	/********************
+	 *	 CONSTRUCTORS	*
+	 ********************/
+	
 
 	/**
 	 * Constructor : creates an empty lexicographic tree.
@@ -30,7 +33,6 @@ public class LexicographicTree {
 	 * @throws NoSuchFileException
 	 */
 	public LexicographicTree(String filename) {
-
 		this();
 		try {
 			var list = Files.readAllLines(Paths.get(filename));
@@ -42,9 +44,12 @@ public class LexicographicTree {
 		}
 	}
 
-	/*
-	 * PUBLIC METHODS
-	 */
+	/************************
+	 *	 PUBLIC METHODS		*
+	 ************************/
+	/************************
+	 *	 PRIVATE METHODS	*
+	 ************************/
 
 	/**
 	 * Returns the number of words present in the lexicographic tree.
@@ -107,7 +112,8 @@ public class LexicographicTree {
 	}
 
 	/**
-	 * 
+	 * this method in this project is make for the boggle {@link Boggle}
+	 *  
 	 * @param prefix the prefix or the word
 	 * @return -1 is not found, 0 if found but not a word, 1 if is a word
 	 */
@@ -119,16 +125,17 @@ public class LexicographicTree {
 
 	}
 
-	/*
-	 * PRIVATE METHODS
-	 */
+	/************************
+	 *	 PRIVATE METHODS	*
+	 ************************/
 
 	/**
 	 * make recursive call to get the node of prefix to go the deepest node of
 	 * prefix
 	 * 
-	 * @param prefix
-	 * @return
+	 * @param prefix the start of a word
+	 * @return the letter node of the prefix 
+	 * 		  or null is there are no words with the prefix
 	 */
 	private LetterNode getNodeOfPrefix(String prefix) {
 		LetterNode node = root;
@@ -140,23 +147,43 @@ public class LexicographicTree {
 		return node;
 	}
 
+	/**
+	 * this method make recursive call to travel 
+	 * on the children nodes to find all the words
+	 * 
+	 * !!!
+	 * the list of all words is fill with the new words
+	 * this is the reason of the return void type
+	 * !!!
+	 * 
+	 * @param allWord the list of all the word
+	 * @param node the start node
+	 * @param prefix the current prefix of the word
+	 */
 	private void getWordform(List<String> allWord, LetterNode node, String prefix) {
 
-		if (node == null) {
-			return;
-		}
 		var subedNode = node.getSubNode();
+		
 		if (node.isFinal() || subedNode == null) {
 			allWord.add(prefix);
 		}
+		//check is the node have children
 		if (subedNode == null)
 			return;
-		for (LetterNode subNode : node.getSubNode()) {
-			getWordform(allWord, subNode, prefix + subNode.getLetter());
+		for (LetterNode subNode : subedNode) {
+			if(subNode!= null)
+				getWordform(allWord, subNode, prefix + subNode.getLetter());
 		}
 
 	}
 
+	/**
+	 * 
+	 * @param n the size of the word
+	 * @param parent
+	 * @param prefix
+	 * @param foundWord
+	 */
 	private void getSubWord(int n, LetterNode parent, String prefix, List<String> foundWord) {
 		if (n <= 0) {
 			if (parent.isFinal()) {
@@ -298,6 +325,6 @@ public class LexicographicTree {
 		testDictionaryPerformance("mots/dictionnaire_FR_sans_accents.txt");
 
 		// CST : test de taille maximale si VM -Xms2048m -Xmx2048m
-		// testDictionarySize();
+		 testDictionarySize();
 	}
 }
