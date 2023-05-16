@@ -27,11 +27,9 @@ public class DictionaryBasedAnalysis {
 	private LexicographicTree dictionary;
 	private List<String> cryptogramWords;
 
-	private String cryptogram;
-
-	static long similarTime = 0;
-	static long RecreatAlphaTime = 0;
-	static long scoreAlphaTime = 0;
+	private static long getCompatibleWordTime = 0;
+	private static long RecreatAlphaTime = 0;
+	private static long scoreAlphaTime = 0;
 
 	/*
 	 * CONSTRUCTOR
@@ -40,8 +38,6 @@ public class DictionaryBasedAnalysis {
 
 		cryptogramWords = Arrays.stream(cryptogram.split("\\s+")).filter(this::filterCrypto).sorted(this::comparelength)
 				.distinct().collect(Collectors.toList());
-
-		this.cryptogram = cryptogram;
 		this.dictionary = dict;
 
 	}
@@ -63,14 +59,13 @@ public class DictionaryBasedAnalysis {
 
 		int currentWordSize = 0;
 		String betterAlpha = alphabet;
-		String temps = alphabet;
 		int betterScore = 0;
 		List<String> listWordOfLenth = new ArrayList<>();
 		for (String wordCrypt : cryptogramWords.stream().filter(this::containsRecurringLetters).toList()) {
 
 			// condition si le mot est deja decrypter il n'est plus utilse il ne modifiera
 			// pas l'aphabet
-			if (dictionary.containsWord(applySubstitution(wordCrypt, betterAlpha))) {
+			if (dictionary.containsWord(applySubstitution(wordCrypt, betterAlpha).toLowerCase())) {
 				continue;
 			}
 			// permet de faire moin appel au dictionnaire
@@ -216,14 +211,17 @@ public class DictionaryBasedAnalysis {
 	}
 
 	private String getCompatibleWord(String wordCrypt, List<String> listOfWord) {
+		long startTime = System.currentTimeMillis();
 		String paternCryptWord = getPaternWord(wordCrypt);
 		for (String word : listOfWord) {
 			if (word.contains("-") || word.contains("\'"))
 				continue;
 			if (paternCryptWord.equals(getPaternWord(word))) {
+				getCompatibleWordTime += System.currentTimeMillis() - startTime;
 				return word;
 			}
 		}
+		getCompatibleWordTime += System.currentTimeMillis() - startTime;
 		return null;
 	}
 
@@ -306,7 +304,7 @@ public class DictionaryBasedAnalysis {
 
 		// Display final results
 		System.out.println("time : " + (System.currentTimeMillis() - startTime) / 1000.0);
-		System.out.println("similarTime :" + similarTime / 1000.0);
+		System.out.println("similarTime :" + getCompatibleWordTime / 1000.0);
 		System.out.println("RecreatAlphaTime :" + RecreatAlphaTime / 1000.0);
 		System.out.println("scoreAlphaTime :" + scoreAlphaTime / 1000.0);
 		System.out.println();
