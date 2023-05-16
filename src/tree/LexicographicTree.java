@@ -47,9 +47,6 @@ public class LexicographicTree {
 	/************************
 	 *	 PUBLIC METHODS		*
 	 ************************/
-	/************************
-	 *	 PRIVATE METHODS	*
-	 ************************/
 
 	/**
 	 * Returns the number of words present in the lexicographic tree.
@@ -59,6 +56,7 @@ public class LexicographicTree {
 	public int size() {
 		return size;
 	}
+
 
 	/**
 	 * Inserts a word in the lexicographic tree if not already present.
@@ -167,7 +165,7 @@ public class LexicographicTree {
 		if (node.isFinal() || subedNode == null) {
 			allWord.add(prefix);
 		}
-		//check is the node have children
+		//check if the node have children
 		if (subedNode == null)
 			return;
 		for (LetterNode subNode : subedNode) {
@@ -178,6 +176,14 @@ public class LexicographicTree {
 	}
 
 	/**
+	 * 
+	 * this methode make recursive call the travel on the tree
+	 * to find all word of lenth "n"
+	 * 
+	 * !!!
+	 * the list of all words is fill with the new words
+	 * this is the reason of the return void type
+	 * !!!
 	 * 
 	 * @param n the size of the word
 	 * @param parent
@@ -202,9 +208,6 @@ public class LexicographicTree {
 		}
 	}
 
-	public LetterNode getRoot() {
-		return root;
-	}
 
 	/*
 	 * TEST FUNCTIONS

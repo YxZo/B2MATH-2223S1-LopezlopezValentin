@@ -188,7 +188,7 @@ public class Boggle {
 	private Graph<BoggleNode, DefaultWeightedEdge> createGraph() {
 	    Graph<BoggleNode, DefaultWeightedEdge> boggleGraph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
 
-	    // Crée et ajoute les sommets
+	    // CrÃ©e et ajoute les sommets
 	    BoggleNode[][] boggleNodes = new BoggleNode[size][size];
 	    for (int i = 0; i < size; i++) {
 	        for (int j = 0; j < size; j++) {
