@@ -165,7 +165,9 @@ public class DictionaryBasedAnalysis {
 		return data;
 	}
 
-	public static String getPaternWord(String word) {
+	
+	
+	private String getPaternWord(String word) {
 		if (word.contains("-") || word.contains("\'")) {
 			return null;
 		}
@@ -298,8 +300,8 @@ public class DictionaryBasedAnalysis {
 		long startTime = System.currentTimeMillis();
 		DictionaryBasedAnalysis dba = new DictionaryBasedAnalysis(cryptogram, dict);
 //		String startAlphabet = LETTERS;
-		String startAlphabet = DECODING_ALPHABET;
-//		String startAlphabet = "ZISHNFOBMAVQLPEUGWXTDYRJKC"; // Random alphabet
+//		String startAlphabet = DECODING_ALPHABET;
+		String startAlphabet = "ZISHNFOBMAVQLPEUGWXTDYRJKC"; // Random alphabet
 		String finalAlphabet = dba.guessApproximatedAlphabet(startAlphabet);
 
 		// Display final results
