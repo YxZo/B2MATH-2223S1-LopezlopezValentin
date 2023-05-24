@@ -3,6 +3,7 @@ package tree;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.BeforeAll;
  * Constructor
  */
 public class LexicographicTreeTestFile {
+
+	private static final String FILE_PATH = "mots/dictionnaire_FR_sans_accents.txt";
 	private static final String[] WORDS = new String[] { "aide", "as", "au", "aux", "bu", "bus", "but", "et", "ete" };
 	private static final LexicographicTree DICT = new LexicographicTree();
 
@@ -141,5 +144,81 @@ public class LexicographicTreeTestFile {
 		assertEquals(1, wordsOfLength.size());
 		assertTrue(wordsOfLength.contains("chat"));
 	}
+	
+	@Test
+	void insertWordNormalWithNumbers() {
+		// Given
+		LexicographicTree dict = new LexicographicTree();
+		List<String> words = new ArrayList<>();
+		String word = "hello";
+		String badWord = "hel15lo";
+		
+		// When
+		dict.insertWord(badWord);
+		words.add(word);
+		
+		// Then
+		assertEquals(1, dict.size());
+		assertEquals(words, dict.getWords(""));
+	}
 
+	@Test
+	void insertWordNormalWithSpecialCharacters() {
+		// Given
+		LexicographicTree dict = new LexicographicTree();
+		List<String> words = new ArrayList<>();
+		String word = "hello";
+		String badWord = "he^^ll$o";
+		
+		// When
+		dict.insertWord(badWord);
+		words.add(word);
+		
+		// Then
+		assertEquals(1, dict.size());
+		assertEquals(words, dict.getWords(""));
+	}
+	
+	@Test
+	void insertEmptyWord() {
+		// Given
+		LexicographicTree dict = new LexicographicTree();
+		String word = "";
+		
+		// When
+		dict.insertWord(word);
+		
+		// Then
+		assertEquals(1, dict.size());
+	}
+	
+	@Test
+	void getWordsOfNulLength() {
+		assertEquals(0, DICT.getWordsOfLength(0).size());	
+	}
+	
+	@Test
+	void getWordsOfNegativeLength() {
+		assertEquals(0, DICT.getWordsOfLength(-5).size());	
+	}
+	
+	@Test
+	void getWordsOfTooHighLength() {
+		assertEquals(0, DICT.getWordsOfLength(35).size());
+	}
+	
+	@Test
+	void getWordWithUppercaseAndAccents(){
+		// Given
+		LexicographicTree dict = new LexicographicTree(FILE_PATH);
+		List<String> words = new ArrayList<>();
+		
+		// When
+		words = dict.getWords("artIste");
+		words = dict.getWords("téléphone");
+		words = dict.getWords("héberGEMent");
+		
+		// Then
+		assertEquals(0, words.size());
+	}	
 }

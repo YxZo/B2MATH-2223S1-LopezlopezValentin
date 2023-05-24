@@ -15,12 +15,9 @@ import tree.LexicographicTree;
 public class Boggle {
 
 	private LexicographicTree dictionary;
-	private char[][] board;
 	private String letters;
 	private final int size;
 	private Graph<BoggleNode, DefaultWeightedEdge> graph;
-
-	private static final Random random = new Random();
 
 	/*
 	 * CONSTRUCTORS

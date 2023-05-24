@@ -46,7 +46,7 @@ public class LexicographicTreeTest {
 			assertEquals(i + 1, dict.size(), "Mot " + WORDS[i] + " en double");
 		}
 	}
-	
+
 	@Test
 	void containsWord_General() {
 		for (String word : WORDS) {
@@ -146,170 +146,158 @@ public class LexicographicTreeTest {
 		assertEquals(1, wordsOfLength.size());
 		assertTrue(wordsOfLength.contains("chat"));
 	}
-	 @Test
-	    void testInsertEmptyWord() {
-		 LexicographicTree tree = new LexicographicTree();
-	        tree.insertWord("");
-	        assertEquals(0, tree.size());
-	    }
 
-	    @Test
-	    void testContainsEmptyWord() {
-	    	LexicographicTree tree = new LexicographicTree();
-	        assertFalse(tree.containsWord(""));
-	    }
+	@Test
+	void testContainsEmptyWord() {
+		LexicographicTree tree = new LexicographicTree();
+		assertFalse(tree.containsWord(""));
+	}
 
-	    @Test
-	    void testGetWordsWithNonExistentPrefix() {
-	    	LexicographicTree tree = new LexicographicTree();
-	        tree.insertWord("chat");
-	        tree.insertWord("chien");
-	        tree.insertWord("cheval");
-	        tree.insertWord("oiseau");
+	@Test
+	void testGetWordsWithNonExistentPrefix() {
+		LexicographicTree tree = new LexicographicTree();
+		tree.insertWord("chat");
+		tree.insertWord("chien");
+		tree.insertWord("cheval");
+		tree.insertWord("oiseau");
 
-	        List<String> wordsWithNonExistentPrefix = tree.getWords("xyz");
-	        assertEquals(0, wordsWithNonExistentPrefix.size());
-	    }
+		List<String> wordsWithNonExistentPrefix = tree.getWords("xyz");
+		assertEquals(0, wordsWithNonExistentPrefix.size());
+	}
 
-	    @Test
-	    void testGetWordsWithPrefixLongerThanWord() {
-	    	LexicographicTree tree = new LexicographicTree();
-	        tree.insertWord("chat");
-	        tree.insertWord("chien");
-	        tree.insertWord("cheval");
-	        tree.insertWord("oiseau");
+	@Test
+	void testGetWordsWithPrefixLongerThanWord() {
+		LexicographicTree tree = new LexicographicTree();
+		tree.insertWord("chat");
+		tree.insertWord("chien");
+		tree.insertWord("cheval");
+		tree.insertWord("oiseau");
 
-	        List<String> wordsWithLongPrefix = tree.getWords("chienoiseau");
-	        assertEquals(0, wordsWithLongPrefix.size());
-	    }
-	    
-	    @Test
-	    void testInsertWordsFromFile() {
-	    	try {
-	    		LexicographicTree treeFromFile = new LexicographicTree("mots/dictionnaire_FR_test_1.txt");
-		        assertTrue(treeFromFile.containsWord("zythums"));
-		        assertTrue(treeFromFile.containsWord("zythum"));
-		        assertTrue(treeFromFile.containsWord("zythons"));
-		        assertTrue(treeFromFile.containsWord("zython"));
-		        assertEquals(4, treeFromFile.size());
-	    	} catch (Exception e) {
-				fail();
-			}
-	        
-	    }
+		List<String> wordsWithLongPrefix = tree.getWords("chienoiseau");
+		assertEquals(0, wordsWithLongPrefix.size());
+	}
 
-	    @Test
-	    void testEmptyPrefix() {
-	    	LexicographicTree tree = new LexicographicTree();
-	        tree.insertWord("chat");
-	        tree.insertWord("chien");
-	        tree.insertWord("cheval");
-	        tree.insertWord("oiseau");
+	@Test
+	void testInsertWordsFromFile() {
+		try {
+			LexicographicTree treeFromFile = new LexicographicTree("mots/dictionnaire_FR_test_1.txt");
+			assertTrue(treeFromFile.containsWord("zythums"));
+			assertTrue(treeFromFile.containsWord("zythum"));
+			assertTrue(treeFromFile.containsWord("zythons"));
+			assertTrue(treeFromFile.containsWord("zython"));
+			assertEquals(4, treeFromFile.size());
+		} catch (Exception e) {
+			fail();
+		}
 
-	        List<String> allWords = tree.getWords("");
-	        assertEquals(4, allWords.size());
-	        assertTrue(allWords.contains("chat"));
-	        assertTrue(allWords.contains("chien"));
-	        assertTrue(allWords.contains("cheval"));
-	        assertTrue(allWords.contains("oiseau"));
-	    }
+	}
 
-	    @Test
-	    void testGetWordsOfInvalidLength() {
-	    	LexicographicTree tree = new LexicographicTree();
-	        tree.insertWord("chat");
-	        tree.insertWord("chien");
-	        tree.insertWord("cheval");
-	        tree.insertWord("oiseau");
+	@Test
+	void testEmptyPrefix() {
+		LexicographicTree tree = new LexicographicTree();
+		tree.insertWord("chat");
+		tree.insertWord("chien");
+		tree.insertWord("cheval");
+		tree.insertWord("oiseau");
 
-	        List<String> wordsOfInvalidLength = tree.getWordsOfLength(-1);
-	        assertEquals(0, wordsOfInvalidLength.size());
-	    }
-	    
-	    @Test
-	    void testInsertAndSearchWords() {
+		List<String> allWords = tree.getWords("");
+		assertEquals(4, allWords.size());
+		assertTrue(allWords.contains("chat"));
+		assertTrue(allWords.contains("chien"));
+		assertTrue(allWords.contains("cheval"));
+		assertTrue(allWords.contains("oiseau"));
+	}
 
-	    	LexicographicTree tree = new LexicographicTree();
-	        tree.insertWord("chat");
-	        tree.insertWord("chien");
-	        tree.insertWord("cheval");
+	@Test
+	void testGetWordsOfInvalidLength() {
+		LexicographicTree tree = new LexicographicTree();
+		tree.insertWord("chat");
+		tree.insertWord("chien");
+		tree.insertWord("cheval");
+		tree.insertWord("oiseau");
 
-	        assertTrue(tree.containsWord("chat"));
-	        assertTrue(tree.containsWord("chien"));
-	        assertTrue(tree.containsWord("cheval"));
-	        assertFalse(tree.containsWord("oiseau"));
-	        assertEquals(3, tree.size());
-	    }
+		List<String> wordsOfInvalidLength = tree.getWordsOfLength(-1);
+		assertEquals(0, wordsOfInvalidLength.size());
+	}
 
-	    @Test
-	    void testInsertAndSearchWordsWithSpecialCharacters() {
-	    	LexicographicTree tree = new LexicographicTree();
-	        tree.insertWord("aujourd'hui");
-	        tree.insertWord("tire-bouchon");
+	@Test
+	void testInsertAndSearchWords() {
 
-	        assertTrue(tree.containsWord("aujourd'hui"));
-	        assertTrue(tree.containsWord("tire-bouchon"));
-	        assertFalse(tree.containsWord("chat"));
-	        assertEquals(2, tree.size());
-	    }
+		LexicographicTree tree = new LexicographicTree();
+		tree.insertWord("chat");
+		tree.insertWord("chien");
+		tree.insertWord("cheval");
 
-	    @Test
-	    void testInsertAndGetWordsWithPrefixAndLength() {
-	    	LexicographicTree tree = new LexicographicTree();
-	        tree.insertWord("chat");
-	        tree.insertWord("chien");
-	        tree.insertWord("cheval");
-	        tree.insertWord("oiseau");
+		assertTrue(tree.containsWord("chat"));
+		assertTrue(tree.containsWord("chien"));
+		assertTrue(tree.containsWord("cheval"));
+		assertFalse(tree.containsWord("oiseau"));
+		assertEquals(3, tree.size());
+	}
 
-	        List<String> wordsWithPrefix = tree.getWords("ch");
-	        List<String> wordsOfLength = tree.getWordsOfLength(4);
-	        
-	        assertEquals(3, wordsWithPrefix.size());
-	        assertEquals(1, wordsOfLength.size());
-	        assertTrue(wordsWithPrefix.contains("chat"));
-	        assertTrue(wordsWithPrefix.contains("cheval"));
-	        assertTrue(wordsWithPrefix.contains("chien"));
-	        assertTrue(wordsOfLength.contains("chat"));
-	        assertFalse(wordsOfLength.contains("chien"));
-	    }
-	    
-	    @ParameterizedTest
-	    @MethodSource("insertWordsArgumentsProvider")
-	    void testInsertWords(String word1, String word2, String word3, int expectedSize) {
+	@Test
+	void testInsertAndSearchWordsWithSpecialCharacters() {
+		LexicographicTree tree = new LexicographicTree();
+		tree.insertWord("aujourd'hui");
+		tree.insertWord("tire-bouchon");
 
-	    	LexicographicTree tree = new LexicographicTree();
-	        tree.insertWord(word1);
-	        tree.insertWord(word2);
-	        tree.insertWord(word3);
+		assertTrue(tree.containsWord("aujourd'hui"));
+		assertTrue(tree.containsWord("tire-bouchon"));
+		assertFalse(tree.containsWord("chat"));
+		assertEquals(2, tree.size());
+	}
 
-	        assertEquals(expectedSize, tree.size());
-	    }
+	@Test
+	void testInsertAndGetWordsWithPrefixAndLength() {
+		LexicographicTree tree = new LexicographicTree();
+		tree.insertWord("chat");
+		tree.insertWord("chien");
+		tree.insertWord("cheval");
+		tree.insertWord("oiseau");
 
-	    static Stream<Arguments> insertWordsArgumentsProvider() {
-	        return Stream.of(
-	            Arguments.of("chat", "chien", "cheval", 3),
-	            Arguments.of("aujourd'hui", "tire-bouchon", "chat", 3),
-	            Arguments.of("chat", "chat", "chien", 2)
-	        );
-	    }
+		List<String> wordsWithPrefix = tree.getWords("ch");
+		List<String> wordsOfLength = tree.getWordsOfLength(4);
 
-	    @ParameterizedTest
-	    @MethodSource("getWordsArgumentsProvider")
-	    void testGetWords(String insertedWord, String prefix, int expectedSize) {
-	    	LexicographicTree tree = new LexicographicTree();
-	        tree.insertWord(insertedWord);
-	        System.out.println();
+		assertEquals(3, wordsWithPrefix.size());
+		assertEquals(1, wordsOfLength.size());
+		assertTrue(wordsWithPrefix.contains("chat"));
+		assertTrue(wordsWithPrefix.contains("cheval"));
+		assertTrue(wordsWithPrefix.contains("chien"));
+		assertTrue(wordsOfLength.contains("chat"));
+		assertFalse(wordsOfLength.contains("chien"));
+	}
 
-	        List<String> wordsWithPrefix = tree.getWords(prefix);
-	        assertEquals(expectedSize, wordsWithPrefix.size());
-	    }
+	@ParameterizedTest
+	@MethodSource("insertWordsArgumentsProvider")
+	void testInsertWords(String word1, String word2, String word3, int expectedSize) {
 
-	    static Stream<Arguments> getWordsArgumentsProvider() {
-	        return Stream.of(
-	            Arguments.of("chat", "ch", 1),
-	            Arguments.of("aujourd'hui", "aujourd", 1),
-	            Arguments.of("chien", "chat", 0)
-	        );
-	    }
+		LexicographicTree tree = new LexicographicTree();
+		tree.insertWord(word1);
+		tree.insertWord(word2);
+		tree.insertWord(word3);
+
+		assertEquals(expectedSize, tree.size());
+	}
+
+	static Stream<Arguments> insertWordsArgumentsProvider() {
+		return Stream.of(Arguments.of("chat", "chien", "cheval", 3),
+				Arguments.of("aujourd'hui", "tire-bouchon", "chat", 3), Arguments.of("chat", "chat", "chien", 2));
+	}
+
+	@ParameterizedTest
+	@MethodSource("getWordsArgumentsProvider")
+	void testGetWords(String insertedWord, String prefix, int expectedSize) {
+		LexicographicTree tree = new LexicographicTree();
+		tree.insertWord(insertedWord);
+		System.out.println();
+
+		List<String> wordsWithPrefix = tree.getWords(prefix);
+		assertEquals(expectedSize, wordsWithPrefix.size());
+	}
+
+	static Stream<Arguments> getWordsArgumentsProvider() {
+		return Stream.of(Arguments.of("chat", "ch", 1), Arguments.of("aujourd'hui", "aujourd", 1),
+				Arguments.of("chien", "chat", 0));
+	}
 
 }

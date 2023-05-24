@@ -65,7 +65,7 @@ public class LexicographicTree {
 	 * @param word A word
 	 */
 	public void insertWord(String word) {
-		if (word != null && !word.isEmpty()) {
+		if (word != null) {
 			insertRecursive(root, word);
 		}
 	}
@@ -118,9 +118,7 @@ public class LexicographicTree {
 	 */
 	public int hasPrefixOrWord(String prefix) {
 		LetterNode node = getNodeForPrefix(root, prefix);
-
 		return (node == null) ? -1 : (node.isLeaf) ? 1 : 0;
-
 	}
 
 	/*
@@ -177,18 +175,29 @@ public class LexicographicTree {
 	 * @param key  The remaining key to be inserted.
 	 */
 	private void insertRecursive(LetterNode node, String key) {
+		
 		// condition d'arret
 		// i loop until the key was empty
-		if (key.isEmpty()) {
+		if (key.isBlank()) {
 			node.isLeaf = true;
 			return;
 		}
 
 		// decoupage du mot entre
-		char firstChar = key.charAt(0);// e
-		String remainingKey = key.substring(1);// st
+		int i = 0;
+		char firstChar;
+		do {
+			firstChar = key.charAt(i);
+			i++;
+		}while(!Character.isLowerCase(firstChar) 
+				&& firstChar != '-' 
+				&& firstChar != '\'' 
+				&&  i < key.length());
+			
+		String remainingKey = key.substring(i);
 
-		LetterNode child = node.child;// null
+		
+		LetterNode child = node.child;
 		LetterNode prev = null;
 
 		// tant que child est different de null et que la valeur de de child est plus
@@ -218,9 +227,6 @@ public class LexicographicTree {
 		insertRecursive(child, remainingKey);
 	}
 
-	private void modifyNode() {
-
-	}
 
 	/**
 	 * Recursively collects all words of a given length starting from the given node

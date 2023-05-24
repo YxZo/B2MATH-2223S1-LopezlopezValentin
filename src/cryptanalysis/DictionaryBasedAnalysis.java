@@ -32,6 +32,7 @@ public class DictionaryBasedAnalysis {
 	private static long getCompatibleWordTime = 0;
 	private static long RecreatAlphaTime = 0;
 	private static long scoreAlphaTime = 0;
+	private static int nbrCallGestScore = 0;
 
 	/*
 	 * CONSTRUCTOR
@@ -246,6 +247,7 @@ public class DictionaryBasedAnalysis {
 
 	private int getScoreAlphabet(String alphabet) {
 		long startTime = System.currentTimeMillis();
+		nbrCallGestScore++;
 		int numWordDecrypt = 0;
 
 		for (String word : cryptogramWords) {
@@ -345,6 +347,7 @@ public class DictionaryBasedAnalysis {
 		System.out.println("similarTime :" + getCompatibleWordTime / 1000.0);
 		System.out.println("RecreatAlphaTime :" + RecreatAlphaTime / 1000.0);
 		System.out.println("scoreAlphaTime :" + scoreAlphaTime / 1000.0);
+		System.out.println("nbr Call get scrore :"+ nbrCallGestScore);
 		System.out.println();
 		System.out.println("Decoding     alphabet : " + LETTERS);
 		System.out.println("Decoding     alphabet : " + DECODING_ALPHABET);
