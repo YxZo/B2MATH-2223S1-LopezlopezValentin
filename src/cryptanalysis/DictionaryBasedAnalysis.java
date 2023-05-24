@@ -8,8 +8,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import tree.LexicographicTree;
@@ -54,6 +56,11 @@ public class DictionaryBasedAnalysis {
 	 * @return The decoding alphabet at the end of the analysis process
 	 */
 	public String guessApproximatedAlphabet(String alphabet) {
+		if (alphabet == null || alphabet.length() != 26 || !isValideAlphabet(alphabet)) {
+			throw new IllegalArgumentException("l'aphabet est invalide");
+		}
+		alphabet = alphabet.toUpperCase();
+
 		if (DEBUG)
 			System.out.printf("debut du traitement pour %d mots\n", cryptogramWords.size());
 
@@ -79,7 +86,7 @@ public class DictionaryBasedAnalysis {
 			}
 			// obtention de la list de mot compatible avec le mùot crypter
 			var compatibleWord = getCompatibleWord(wordCrypt, listWordOfLenth);
-			
+
 			if (compatibleWord == null)
 				continue;
 
@@ -120,13 +127,25 @@ public class DictionaryBasedAnalysis {
 	 * @return The substituted text
 	 */
 	public static String applySubstitution(String text, String alphabet) {
+		if (alphabet == null || alphabet.length() == 0 || alphabet.length() != 26 || !isValideAlphabet(alphabet)) {
+			throw new IllegalArgumentException("l'aphabet est invalide");
+		}
+		if (text == null) {
+			throw new IllegalArgumentException("le texte est invalide");
+		}
+		if (text.length() == 0)
+			return text;
 		String wordSubstitued = "";
 		for (char c : text.toUpperCase().toCharArray()) {
+			if(!Character.isLetter(c) && c != ' ')
+				continue;
+			
 			int index = LETTERS.indexOf(c);
 			wordSubstitued += index >= 0 ? alphabet.charAt(index) : c;
 		}
 		return wordSubstitued;
 	}
+	
 
 	/*
 	 * PRIVATE METHODS
@@ -165,8 +184,6 @@ public class DictionaryBasedAnalysis {
 		return data;
 	}
 
-	
-	
 	private String getPaternWord(String word) {
 		if (word.contains("-") || word.contains("\'")) {
 			return null;
@@ -273,12 +290,31 @@ public class DictionaryBasedAnalysis {
 		return new String(chars);
 
 	}
+	
+	public static boolean isValideAlphabet(String alphabet) {
+	    // Utiliser un ensemble (Set) pour stocker les lettres uniques de l'alphabet
+	    Set<Character> caracteres = new HashSet<>();
+
+	    for (int i = 0; i < alphabet.length(); i++) {
+	        char lettre = alphabet.charAt(i);
+
+	        // Vérifier si la lettre existe déjà dans l'ensemble
+	        if (caracteres.contains(lettre)) {
+	            return false; // Une lettre identique a déjà été trouvée
+	        }
+
+	        // Ajouter la lettre à l'ensemble
+	        caracteres.add(lettre);
+	    }
+
+	    return true; // Toutes les lettres sont uniques
+	}
 
 	/*
 	 * MAIN PROGRAM
 	 */
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		/*
 		 * Load dictionary
 		 */

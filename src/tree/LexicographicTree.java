@@ -2,51 +2,53 @@ package tree;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import boggle.Boggle;
-
+/**
+ * Represents a lexicographic tree data structure for storing and searching
+ * words.
+ */
 public class LexicographicTree {
+
 	private LetterNode root;
-	private int size;
-	/********************
-	 *	 CONSTRUCTORS	*
-	 ********************/
-	
+
+	/*
+	 * CONSTRUCTORS
+	 */
 
 	/**
 	 * Constructor : creates an empty lexicographic tree.
 	 */
 	public LexicographicTree() {
-		root = new LetterNode(' ');
+		root = new LetterNode('\0');
 	}
 
 	/**
 	 * Constructor : creates a lexicographic tree populated with words
 	 * 
 	 * @param filename A text file containing the words to be inserted in the tree
-	 * @throws NoSuchFileException
+	 * @throws IOException
 	 */
 	public LexicographicTree(String filename) {
 		this();
 		try {
-			var list = Files.readAllLines(Paths.get(filename));
-			list.forEach(str -> this.insertWord(str));
-		} catch (Exception e) {
-			// ici pour ne pas avoir des erreurs dans le testes et tout de meme pouvoir gere
-			// le faite que l'erreur soit lance
-			throw new RuntimeException(new NoSuchFileException(filename));
+			List<String> list = Files.readAllLines(Paths.get(filename));
+			for (String str : list) {
+				insertWord(str);
+			}
+		} catch (IOException e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 
-	/************************
-	 *	 PUBLIC METHODS		*
-	 ************************/
+	/*
+	 * PUBLIC METHODS
+	 */
 
 	/**
 	 * Returns the number of words present in the lexicographic tree.
@@ -54,18 +56,18 @@ public class LexicographicTree {
 	 * @return The number of words present in the lexicographic tree
 	 */
 	public int size() {
-		return size;
+		return sizeRecursive(root);
 	}
-
 
 	/**
 	 * Inserts a word in the lexicographic tree if not already present.
 	 * 
-	 * @param word A word to insert
+	 * @param word A word
 	 */
 	public void insertWord(String word) {
-		if (root.linkWord(word))
-			size++;
+		if (word != null && !word.isEmpty()) {
+			insertRecursive(root, word);
+		}
 	}
 
 	/**
@@ -75,7 +77,7 @@ public class LexicographicTree {
 	 * @return True if the word is present, false otherwise
 	 */
 	public boolean containsWord(String word) {
-		return root.containt(word);
+		return word != null && !word.isEmpty() && searchRecursive(root, word);
 	}
 
 	/**
@@ -86,12 +88,12 @@ public class LexicographicTree {
 	 * @return The list of words starting with the supplied prefix
 	 */
 	public List<String> getWords(String prefix) {
-		List<String> foundWord = new ArrayList<>();
-		LetterNode startNode = getNodeOfPrefix(prefix);
-		if (startNode != null) {
-			getWordform(foundWord, startNode, prefix);
+		List<String> words = new ArrayList<>();
+		LetterNode node = getNodeForPrefix(root, prefix);
+		if (node != null) {
+			collectWords(node, prefix, words);
 		}
-		return foundWord;
+		return words;
 	}
 
 	/**
@@ -102,112 +104,190 @@ public class LexicographicTree {
 	 * @return The list of words with the given length
 	 */
 	public List<String> getWordsOfLength(int length) {
-		if (length <= 0)
-			return List.of();
-		List<String> foundWord = new ArrayList<>();
-		getSubWord(length, root, "", foundWord);
-		return foundWord;
+		List<String> words = new ArrayList<>();
+		getWordsOfLengthRecursive(root, "", length, words);
+		return words;
 	}
 
 	/**
-	 * this method in this project is make for the boggle {@link Boggle}
-	 *  
-	 * @param prefix the prefix or the word
-	 * @return -1 is not found, 0 if found but not a word, 1 if is a word
+	 * Checks if a prefix or word exists in the lexicographic tree.
+	 * 
+	 * @param prefix The prefix or word to check.
+	 * @return -1 if the prefix is not found, 0 if the prefix is found but is not a
+	 *         complete word, 1 if the prefix is found and is a complete word.
 	 */
 	public int hasPrefixOrWord(String prefix) {
-		var node = getNodeOfPrefix(prefix);
-		return (node == null) ? -1
-				: node.isFinal() ? 1
-						: 0;
+		LetterNode node = getNodeForPrefix(root, prefix);
+
+		return (node == null) ? -1 : (node.isLeaf) ? 1 : 0;
 
 	}
 
-	/************************
-	 *	 PRIVATE METHODS	*
-	 ************************/
+	/*
+	 * PRIVATE METHODS
+	 */
 
 	/**
-	 * make recursive call to get the node of prefix to go the deepest node of
-	 * prefix
+	 * Recursively finds the node corresponding to the given prefix.
 	 * 
-	 * @param prefix the start of a word
-	 * @return the letter node of the prefix 
-	 * 		  or null is there are no words with the prefix
+	 * @param node   The current node being examined.
+	 * @param prefix The prefix to search for.
+	 * @return The node corresponding to the prefix, or null if not found.
 	 */
-	private LetterNode getNodeOfPrefix(String prefix) {
-		LetterNode node = root;
-		for (int i = 0; i < prefix.length(); i++) {
-			node = node.getLinkTo(prefix.charAt(i));
-			if (node == null)
-				return null;
+	private LetterNode getNodeForPrefix(LetterNode node, String prefix) {
+		if (prefix.isEmpty()) {
+			return node;
 		}
-		return node;
+
+		char firstChar = prefix.charAt(0);
+		String remainingPrefix = prefix.substring(1);
+
+		for (LetterNode child = node.child; child != null; child = child.sibling) {
+			if (child.charValue == firstChar) {
+				return getNodeForPrefix(child, remainingPrefix);
+			} else if (child.charValue > firstChar) {
+				break;
+			}
+		}
+
+		return null;
 	}
 
 	/**
-	 * this method make recursive call to travel 
-	 * on the children nodes to find all the words
+	 * Collects all words starting from the given node and with the given prefix.
 	 * 
-	 * !!!
-	 * the list of all words is fill with the new words
-	 * this is the reason of the return void type
-	 * !!!
-	 * 
-	 * @param allWord the list of all the word
-	 * @param node the start node
-	 * @param prefix the current prefix of the word
+	 * @param node   The current node being examined.
+	 * @param prefix The prefix of the words.
+	 * @param words  The list of words found.
 	 */
-	private void getWordform(List<String> allWord, LetterNode node, String prefix) {
-
-		var subedNode = node.getSubNode();
-		
-		if (node.isFinal() || subedNode == null) {
-			allWord.add(prefix);
-		}
-		//check if the node have children
-		if (subedNode == null)
-			return;
-		for (LetterNode subNode : subedNode) {
-			if(subNode!= null)
-				getWordform(allWord, subNode, prefix + subNode.getLetter());
+	private void collectWords(LetterNode node, String prefix, List<String> words) {
+		if (node.isLeaf) {
+			words.add(prefix);
 		}
 
+		for (LetterNode child = node.child; child != null; child = child.sibling) {
+			collectWords(child, prefix + child.charValue, words);
+		}
 	}
 
 	/**
+	 * Recursively inserts a word into the lexicographic tree.
 	 * 
-	 * this methode make recursive call the travel on the tree
-	 * to find all word of lenth "n"
-	 * 
-	 * !!!
-	 * the list of all words is fill with the new words
-	 * this is the reason of the return void type
-	 * !!!
-	 * 
-	 * @param n the size of the word
-	 * @param parent
-	 * @param prefix
-	 * @param foundWord
+	 * @param node The current node being examined.
+	 * @param key  The remaining key to be inserted.
 	 */
-	private void getSubWord(int n, LetterNode parent, String prefix, List<String> foundWord) {
-		if (n <= 0) {
-			if (parent.isFinal()) {
-				foundWord.add(prefix);
-				return;
-			} else
-				return;
-		}
-		if (parent.getSubNode() == null) {
+	private void insertRecursive(LetterNode node, String key) {
+		// condition d'arret
+		// i loop until the key was empty
+		if (key.isEmpty()) {
+			node.isLeaf = true;
 			return;
 		}
 
-		for (LetterNode node : parent.getSubNode()) {
-			if (node != null)
-				getSubWord(n - 1, node, prefix + node.getLetter(), foundWord);
+		// decoupage du mot entre
+		char firstChar = key.charAt(0);// e
+		String remainingKey = key.substring(1);// st
+
+		LetterNode child = node.child;// null
+		LetterNode prev = null;
+
+		// tant que child est different de null et que la valeur de de child est plus
+		// petite que la premier lettre de la cle
+		while (child != null && child.charValue < firstChar) {
+			prev = child;
+			child = child.sibling;
+		}
+
+		if (child == null || child.charValue != firstChar) {
+
+			// creation de la novelle node
+			LetterNode newNode = new LetterNode(firstChar);
+			newNode.sibling = child;
+
+			if (prev != null) {
+				// ajout en tant que frere (le but ici est de faire une liste chainée sur les
+				// lettres qui se suive)
+				prev.sibling = newNode;
+			} else {
+				// ajout du lien sur la node parent
+				node.child = newNode;
+			}
+			child = newNode;
+		}
+
+		insertRecursive(child, remainingKey);
+	}
+
+	private void modifyNode() {
+
+	}
+
+	/**
+	 * Recursively collects all words of a given length starting from the given node
+	 * and with the given prefix.
+	 * 
+	 * @param node   The current node being examined.
+	 * @param prefix The prefix of the words.
+	 * @param length The length of the words to collect.
+	 * @param words  The list of words found.
+	 */
+	private void getWordsOfLengthRecursive(LetterNode node, String prefix, int length, List<String> words) {
+		if (node == null) {
+			return;
+		}
+
+		if (length == 0 && node.isLeaf) {
+			words.add(prefix);
+		} else if (length > 0) {
+			for (LetterNode child = node.child; child != null; child = child.sibling) {
+				getWordsOfLengthRecursive(child, prefix + child.charValue, length - 1, words);
+			}
 		}
 	}
 
+	/**
+	 * Recursively searches for a word in the lexicographic tree.
+	 * 
+	 * @param node The current node being examined.
+	 * @param key  The remaining key to be searched.
+	 * @return True if the word is found, false otherwise.
+	 */
+	private boolean searchRecursive(LetterNode node, String key) {
+		if (key.isEmpty()) {
+			return node.isLeaf;
+		}
+
+		char firstChar = key.charAt(0);
+		String remainingKey = key.substring(1);
+
+		for (LetterNode child = node.child; child != null; child = child.sibling) {
+			if (child.charValue == firstChar) {
+				return searchRecursive(child, remainingKey);
+			} else if (child.charValue > firstChar) {
+				break;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Recursively calculates the size of the lexicographic tree.
+	 * 
+	 * @param node The current node being examined.
+	 * @return The size of the lexicographic tree.
+	 */
+	private int sizeRecursive(LetterNode node) {
+		if (node == null) {
+			return 0;
+		}
+
+		int size = node.isLeaf ? 1 : 0;
+		for (LetterNode child = node.child; child != null; child = child.sibling) {
+			size += sizeRecursive(child);
+		}
+
+		return size;
+	}
 
 	/*
 	 * TEST FUNCTIONS
@@ -223,7 +303,7 @@ public class LexicographicTree {
 		return word;
 	}
 
-	private static void testDictionaryPerformance(String filename) throws NoSuchFileException {
+	private static void testDictionaryPerformance(String filename) throws IOException {
 		long startTime;
 		int repeatCount = 20;
 
@@ -237,8 +317,6 @@ public class LexicographicTree {
 		System.out.println("Load time : " + (System.currentTimeMillis() - startTime) / 1000.0);
 		System.out.println("Number of words : " + dico.size());
 		System.out.println();
-
-		// new GraphViewer(dico);
 
 		// Search existing words in dictionary
 		startTime = System.currentTimeMillis();
@@ -322,12 +400,17 @@ public class LexicographicTree {
 	 * MAIN PROGRAM
 	 */
 
-	public static void main(String[] args) throws NoSuchFileException {
-
+	public static void main(String[] args) throws IOException {
+//		LexicographicTree dico = new LexicographicTree();
+//		dico.insertWord("test");
+//		dico.insertWord("testes");
+//		dico.insertWord("testee");
+//		dico.insertWord("ter");
+//		var test = "test";
 		// CTT : test de performance insertion/recherche
 		testDictionaryPerformance("mots/dictionnaire_FR_sans_accents.txt");
 
 		// CST : test de taille maximale si VM -Xms2048m -Xmx2048m
-		 testDictionarySize();
+		testDictionarySize();
 	}
 }
