@@ -18,7 +18,7 @@ import org.junit.jupiter.api.BeforeAll;
  * Constructor
  */
 public class LexicographicTreeTest {
-	private static final String[] WORDS = new String[] { "aide", "as", "au", "aux", "bu", "bus", "but", "et", "ete" };
+	private static final String[] WORDS = new String[] {"aide", "as", "au", "aux", "bu", "bus", "but", "et", "ete" };
 	private static final LexicographicTree DICT = new LexicographicTree();
 
 	@BeforeAll

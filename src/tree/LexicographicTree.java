@@ -117,8 +117,27 @@ public class LexicographicTree {
 	 *         complete word, 1 if the prefix is found and is a complete word.
 	 */
 	public int hasPrefixOrWord(String prefix) {
-		LetterNode node = getNodeForPrefix(root, prefix);
-		return (node == null) ? -1 : (node.isLeaf) ? 1 : 0;
+	
+	    LetterNode node = root;
+	    int i = 0;
+	    while (i < prefix.length()) {
+	        char c = prefix.charAt(i);
+	        boolean found = false;
+	        for (LetterNode child = node.child; child != null; child = child.sibling) {
+	            if (child.charValue == c) {
+	                node = child;
+	                found = true;
+	                break;
+	            } else if (child.charValue > c) {
+	                return -1;
+	            }
+	        }
+	        if (!found) {
+	            return -1;
+	        }
+	        i++;
+	    }
+	    return node.isLeaf ? 1 : 0;
 	}
 
 	/*
