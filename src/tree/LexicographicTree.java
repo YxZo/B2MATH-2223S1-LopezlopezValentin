@@ -42,7 +42,7 @@ public class LexicographicTree {
 				insertWord(str);
 			}
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			//if a error is catch just ignore that just create a dictionary empty
 		}
 	}
 
@@ -177,7 +177,6 @@ public class LexicographicTree {
 	private void insertRecursive(LetterNode node, String key) {
 		
 		// condition d'arret
-		// i loop until the key was empty
 		if (key.isBlank()) {
 			node.isLeaf = true;
 			return;
@@ -207,9 +206,22 @@ public class LexicographicTree {
 			child = child.sibling;
 		}
 
+		insertData(node, firstChar, remainingKey, child, prev);
+	}
+
+	/**
+	 * this methode is a part of the insertRecursive 
+	 * 
+	 * @param node the currunt node
+	 * @param firstChar the current letter
+	 * @param remainingKey the other letter
+	 * @param child the current child 
+	 * @param prev 
+	 */
+	private void insertData(LetterNode node, char firstChar, String remainingKey, LetterNode child, LetterNode prev) {
 		if (child == null || child.charValue != firstChar) {
 
-			// creation de la novelle node
+			// creation de la nouvelle node
 			LetterNode newNode = new LetterNode(firstChar);
 			newNode.sibling = child;
 
@@ -407,12 +419,12 @@ public class LexicographicTree {
 	 */
 
 	public static void main(String[] args) throws IOException {
-//		LexicographicTree dico = new LexicographicTree();
-//		dico.insertWord("test");
-//		dico.insertWord("testes");
-//		dico.insertWord("testee");
-//		dico.insertWord("ter");
-//		var test = "test";
+		LexicographicTree dico = new LexicographicTree();
+		dico.insertWord("test");
+		dico.insertWord("testes");
+		dico.insertWord("testee");
+		dico.insertWord("ter");
+		var test = "test";
 		// CTT : test de performance insertion/recherche
 		testDictionaryPerformance("mots/dictionnaire_FR_sans_accents.txt");
 

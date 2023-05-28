@@ -11,7 +11,9 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
 import tree.LexicographicTree;
-
+/**
+ * Boggle class that represents a Boggle game, a word search game where you try to find words in a grid of letters.
+ */
 public class Boggle {
 
 	private LexicographicTree dictionary;
@@ -131,7 +133,12 @@ public class Boggle {
 	/*
 	 * PRIVATE METHODS
 	 */
-
+	/**
+     * Traverses the graph starting from a node and finds valid words.
+     * @param node The node to start from
+     * @param currentWord The current word built up during traversal
+     * @param allWord The set to store all found words
+     */
 	private void searchForOneLetter(BoggleNode node, String currentWord, Set<String> allWord) {
 
 		if (node.isVisited()) {
@@ -157,13 +164,24 @@ public class Boggle {
 
 		node.setVisited(false);
 	}
-
+	 /**
+     * Retrieves the neighbour node for a given edge.
+     * @param edge The edge to get neighbour for
+     * @param node The node to get neighbour for
+     * @return The neighbour node
+     */
 	private BoggleNode getNeighborOfEdge(DefaultWeightedEdge edge, BoggleNode node) {
 		BoggleNode sourceNode = graph.getEdgeSource(edge);
 		BoggleNode targetNode = graph.getEdgeTarget(edge);
 		return sourceNode.equals(node) ? targetNode : sourceNode;
 	}
-
+	/**
+     * Searches for a specific string in the graph starting from a node.
+     * @param node The node to start from
+     * @param currentWord The current word built up during traversal
+     * @param str The string to search for
+     * @return true if the string is found, false otherwise
+     */
 	private boolean searchForStr(BoggleNode node, String currentWord, String str) {
 		if (node.isVisited()) {
 			return false;
@@ -187,17 +205,12 @@ public class Boggle {
 		node.setVisited(false);
 		return isIn;
 	}
-
+	/**
+     * Creates the Boggle graph.
+     * @return The created Boggle graph
+     */
 	private Graph<BoggleNode, DefaultWeightedEdge> createGraph() {
 		Graph<BoggleNode, DefaultWeightedEdge> boggleGraph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
-
-//		this.board = new char[size][size];
-//		for (int i = 0; i < board.length; i++) {
-//			for (int j = 0; j < board.length; j++) {
-//				char c = letters.charAt(j * size + i);
-//				board[j][i] = letters.charAt(j * size + i);
-//			}
-//		}
 		// Cree et ajoute les sommets
 		BoggleNode[][] boggleNodes = new BoggleNode[size][size];
 		for (int i = 0; i < size; i++) {
@@ -225,11 +238,21 @@ public class Boggle {
 
 		return boggleGraph;
 	}
-
+	/**
+     * Determines if a given coordinate is within the grid.
+     * @param row The row of the coordinate
+     * @param col The column of the coordinate
+     * @param size The size of the grid
+     * @return true if the coordinate is valid, false otherwise
+     */
 	private boolean isValidCoordinate(int row, int col, int size) {
 		return row >= 0 && row < size && col >= 0 && col < size;
 	}
-
+	/**
+     * Generates a string of random letters of a given size.
+     * @param size The size of the string
+     * @return The generated string
+     */
 	private static String geneStrRandom(int size) {
 		// find on https://www.apprendre-en-ligne.net/crypto/stat/francais.html
 		// mon but est de le genere en fonction du dictionnaire
@@ -245,7 +268,12 @@ public class Boggle {
 
 		return strGenereted;
 	}
-
+	 /**
+     * Gets a random index from a given array based on the provided frequencies.
+     * @param frequencies The frequencies for each index
+     * @param random The random number generator
+     * @return The selected random index
+     */
 	private static int getRandomIndex(double[] frequencies, Random random) {
 		double total = 0.0;
 		for (double freq : frequencies) {
@@ -263,7 +291,11 @@ public class Boggle {
 
 		return -1;
 	}
-	
+	/**
+     * Checks if a given string only contains alphabetic characters.
+     * @param alpha The string to check
+     * @return true if the string only contains alphabetic characters, false otherwise
+     */
 	private boolean verifyAlpha(String alpha) {
 		for (char c : alpha.toCharArray()) {
 			if (!Character.isLetter(c))
