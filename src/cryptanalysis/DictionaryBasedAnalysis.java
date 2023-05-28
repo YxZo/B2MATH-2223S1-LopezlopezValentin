@@ -7,9 +7,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import tree.LexicographicTree;
@@ -30,14 +33,17 @@ public class DictionaryBasedAnalysis {
 	private static long getCompatibleWordTime = 0;
 	private static long RecreatAlphaTime = 0;
 	private static long scoreAlphaTime = 0;
+	private static int nbrCallGestScore = 0;
 
 	/*
 	 * CONSTRUCTOR
 	 */
 	public DictionaryBasedAnalysis(String cryptogram, LexicographicTree dict) {
-
-		cryptogramWords = Arrays.stream(cryptogram.split("\\s+")).filter(this::filterCrypto).sorted(this::comparelength)
-				.distinct().collect(Collectors.toList());
+		cryptogramWords = Arrays.stream(cryptogram.split("\\s+"))
+                .filter(word -> word.length() > 2)
+                .distinct()
+                .sorted(Comparator.comparingInt(String::length).reversed())
+                .collect(Collectors.toList());
 		this.dictionary = dict;
 
 	}
@@ -54,6 +60,11 @@ public class DictionaryBasedAnalysis {
 	 * @return The decoding alphabet at the end of the analysis process
 	 */
 	public String guessApproximatedAlphabet(String alphabet) {
+		if (alphabet == null || alphabet.length() != 26 || !isValideAlphabet(alphabet)) {
+			throw new IllegalArgumentException("l'aphabet est invalide");
+		}
+		alphabet = alphabet.toUpperCase();
+
 		if (DEBUG)
 			System.out.printf("debut du traitement pour %d mots\n", cryptogramWords.size());
 
@@ -61,7 +72,7 @@ public class DictionaryBasedAnalysis {
 		String betterAlpha = alphabet;
 		int betterScore = 0;
 		List<String> listWordOfLenth = new ArrayList<>();
-		for (String wordCrypt : cryptogramWords.stream().filter(this::containsRecurringLetters).toList()) {
+		for (String wordCrypt : cryptogramWords.stream().filter(this::containsRecurringLetters).collect(Collectors.toList())) {
 
 			// condition si le mot est deja decrypter il n'est plus utilse il ne modifiera
 			// pas l'aphabet
@@ -79,7 +90,7 @@ public class DictionaryBasedAnalysis {
 			}
 			// obtention de la list de mot compatible avec le mùot crypter
 			var compatibleWord = getCompatibleWord(wordCrypt, listWordOfLenth);
-			
+
 			if (compatibleWord == null)
 				continue;
 
@@ -98,7 +109,6 @@ public class DictionaryBasedAnalysis {
 			if (betterScore < score) {
 				betterScore = score;
 				betterAlpha = alphabet;
-
 			}
 
 			if (DEBUG) {
@@ -120,17 +130,29 @@ public class DictionaryBasedAnalysis {
 	 * @return The substituted text
 	 */
 	public static String applySubstitution(String text, String alphabet) {
+		if (alphabet == null || alphabet.length() == 0 || alphabet.length() != 26 || !isValideAlphabet(alphabet)) {
+			throw new IllegalArgumentException("l'aphabet est invalide");
+		}
+		if (text == null) {
+			throw new IllegalArgumentException("le texte est invalide");
+		}
+		if (text.length() == 0)
+			return text;
 		String wordSubstitued = "";
 		for (char c : text.toUpperCase().toCharArray()) {
+			if(!Character.isLetter(c) && c != ' ' && c != '\n')
+				continue;
+			
 			int index = LETTERS.indexOf(c);
 			wordSubstitued += index >= 0 ? alphabet.charAt(index) : c;
 		}
 		return wordSubstitued;
 	}
+	
 
-	/*
-	 * PRIVATE METHODS
-	 */
+	/*******************/
+	/* PRIVATE METHODS */
+	/*******************/
 
 	/**
 	 * Compares two substitution alphabets.
@@ -165,8 +187,13 @@ public class DictionaryBasedAnalysis {
 		return data;
 	}
 
-	
-	
+	/**
+	 * Returns the pattern of a word. Each unique character is replaced by a unique number.
+	 * Characters are replaced by the order of their first occurrence.
+	 *
+	 * @param word The word to generate a pattern from
+	 * @return The pattern of the word
+	 */
 	private String getPaternWord(String word) {
 		if (word.contains("-") || word.contains("\'")) {
 			return null;
@@ -186,10 +213,12 @@ public class DictionaryBasedAnalysis {
 		return patern;
 	}
 
-	private boolean filterCrypto(String word) {
-		return word.length() > 2;
-	}
-
+	/**
+	 * Checks if a word contains recurring letters.
+	 *
+	 * @param word The word to be checked
+	 * @return true if the word contains recurring letters, false otherwise
+	 */
 	private boolean containsRecurringLetters(String word) {
 		int[] letterCount = new int[26];
 		for (int i = 0; i < word.length(); i++) {
@@ -205,13 +234,13 @@ public class DictionaryBasedAnalysis {
 		return false;
 	}
 
-	private int comparelength(String o1, String o2) {
-		if (o1.length() != o2.length()) {
-			return o2.length() - o1.length();
-		}
-		return o2.compareTo(o1);
-	}
-
+	/**
+	 * Returns a compatible word from the dictionary for the given encrypted word.
+	 *
+	 * @param wordCrypt The encrypted word
+	 * @param listOfWord The list of dictionary words of the same length as the encrypted word
+	 * @return A compatible word from the dictionary
+	 */
 	private String getCompatibleWord(String wordCrypt, List<String> listOfWord) {
 		long startTime = System.currentTimeMillis();
 		String paternCryptWord = getPaternWord(wordCrypt);
@@ -226,9 +255,16 @@ public class DictionaryBasedAnalysis {
 		getCompatibleWordTime += System.currentTimeMillis() - startTime;
 		return null;
 	}
-
+	
+	/**
+	 * Calculates the score of an alphabet based on the number of valid decrypted words.
+	 *
+	 * @param alphabet The alphabet to be scored
+	 * @return The score of the alphabet
+	 */
 	private int getScoreAlphabet(String alphabet) {
 		long startTime = System.currentTimeMillis();
+		nbrCallGestScore++;
 		int numWordDecrypt = 0;
 
 		for (String word : cryptogramWords) {
@@ -243,7 +279,15 @@ public class DictionaryBasedAnalysis {
 		}
 		return numWordDecrypt;
 	}
-
+	
+	/**
+	 * Updates a given alphabet based on a given encrypted word and its corresponding dictionary word.
+	 *
+	 * @param alpha The current alphabet
+	 * @param cryptWord The encrypted word
+	 * @param dictWord The corresponding dictionary word
+	 * @return The updated alphabet
+	 */
 	private String updateAlpha(String alpha, String cryptWord, String dictWord) {
 		long startTime = System.currentTimeMillis();
 		dictWord = dictWord.toUpperCase();
@@ -254,17 +298,26 @@ public class DictionaryBasedAnalysis {
 
 			newAlpha = swapLetters(newAlpha, pos, posLetterToswap);
 		}
-		RecreatAlphaTime += System.currentTimeMillis() - startTime;
+		
 
 		if (DEBUG) {
 			System.out.printf("better       alphabet :%s\n", alpha);
 			System.out.printf("New approxim alphabet :%s\n", newAlpha);
 			System.out.printf("        Modifications :%s\n\n", compareAlphabets(alpha, newAlpha));
 		}
+		RecreatAlphaTime += System.currentTimeMillis() - startTime;
 
 		return newAlpha;
 	}
-
+	
+	/**
+	 * Swaps two characters at the given indices in a string.
+	 *
+	 * @param str The string in which characters are to be swapped
+	 * @param i The index of the first character
+	 * @param j The index of the second character
+	 * @return The updated string
+	 */
 	private String swapLetters(String str, int i, int j) {
 		char[] chars = str.toCharArray();
 		char temp = chars[i];
@@ -273,12 +326,36 @@ public class DictionaryBasedAnalysis {
 		return new String(chars);
 
 	}
+	/**
+	 * Checks if a given alphabet is valid, that is, it contains only unique characters.
+	 *
+	 * @param alphabet The alphabet to be checked
+	 * @return true if the alphabet is valid, false otherwise
+	 */
+	private static boolean isValideAlphabet(String alphabet) {
+	    // Utiliser un ensemble (Set) pour stocker les lettres uniques de l'alphabet
+	    Set<Character> caracteres = new HashSet<>();
+
+	    for (int i = 0; i < alphabet.length(); i++) {
+	        char lettre = alphabet.charAt(i);
+
+	        // Vérifier si la lettre existe déjà dans l'ensemble
+	        if (caracteres.contains(lettre)) {
+	            return false; // Une lettre identique a déjà été trouvée
+	        }
+
+	        // Ajouter la lettre à l'ensemble
+	        caracteres.add(lettre);
+	    }
+
+	    return true; // Toutes les lettres sont uniques
+	}
 
 	/*
 	 * MAIN PROGRAM
 	 */
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		/*
 		 * Load dictionary
 		 */
@@ -309,6 +386,7 @@ public class DictionaryBasedAnalysis {
 		System.out.println("similarTime :" + getCompatibleWordTime / 1000.0);
 		System.out.println("RecreatAlphaTime :" + RecreatAlphaTime / 1000.0);
 		System.out.println("scoreAlphaTime :" + scoreAlphaTime / 1000.0);
+		System.out.println("nbr Call get scrore :"+ nbrCallGestScore);
 		System.out.println();
 		System.out.println("Decoding     alphabet : " + LETTERS);
 		System.out.println("Decoding     alphabet : " + DECODING_ALPHABET);
